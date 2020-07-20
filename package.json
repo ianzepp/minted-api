@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "compile": "bash ./scripts/compile.sh",
-    "test": "bash ./scripts/test.sh",
-    "postinstall": "link-module-alias"
+    "postinstall": "link-module-alias",
+    "start": "bash ./scripts/start.sh",
+    "test": "bash ./scripts/test.sh"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "typescript": "^3.9.7"
   },
   "devDependencies": {
+    "@types/node": "^14.0.23",
     "link-module-alias": "^1.2.0"
   },
   "_moduleAliases": {
