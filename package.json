@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/ianzepp/minted-api#readme",
   "dependencies": {
+    "@types/lodash": "^4.14.157",
+    "lodash": "^4.17.19",
     "typescript": "^3.9.7"
   }
 }
