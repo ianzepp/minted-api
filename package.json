@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/ianzepp/minted-api/issues"
   },
-  "homepage": "https://github.com/ianzepp/minted-api#readme"
+  "homepage": "https://github.com/ianzepp/minted-api#readme",
+  "dependencies": {
+    "typescript": "^3.9.7"
+  }
 }
