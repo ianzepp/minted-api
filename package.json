@@ -4,7 +4,8 @@
   "description": "Minted API",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test"
+    "compile": "bash ./scripts/compile.sh",
+    "test": "bash ./scripts/test.sh"
   },
   "repository": {
     "type": "git",
