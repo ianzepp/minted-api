@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "compile": "bash ./scripts/compile.sh",
-    "test": "bash ./scripts/test.sh"
+    "test": "bash ./scripts/test.sh",
+    "postinstall": "link-module-alias"
   },
   "repository": {
     "type": "git",
@@ -18,8 +19,16 @@
   },
   "homepage": "https://github.com/ianzepp/minted-api#readme",
   "dependencies": {
+    "@types/knex": "^0.16.1",
     "@types/lodash": "^4.14.157",
+    "knex": "^0.21.2",
     "lodash": "^4.17.19",
     "typescript": "^3.9.7"
+  },
+  "devDependencies": {
+    "link-module-alias": "^1.2.0"
+  },
+  "_moduleAliases": {
+    "~src": "src"
   }
 }
