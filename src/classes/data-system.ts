@@ -1,9 +1,9 @@
 
-import { DataDriver } from '~src/classes/data-driver';
-import { FilterType } from '~src/classes/filter';
-import { Record } from '~src/classes/record';
-import { SchemaType } from '~src/classes/schema';
-import { System } from '~src/system';
+import { DataDriver } from '../classes/data-driver';
+import { FilterType } from '../classes/filter';
+import { Record } from '../classes/record';
+import { SchemaType } from '../classes/schema';
+import { System } from '../system';
 
 export class DataSystem {
     constructor(private readonly system: System) {

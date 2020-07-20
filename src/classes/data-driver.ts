@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import Knex from 'knex';
 
-import { Filter } from '~src/classes/filter';
-import { Record } from '~src/classes/record';
-import { Schema } from '~src/classes/schema';
+import { Filter } from '../classes/filter';
+import { KnexClient } from '../classes/knex-client';
+import { Record } from '../classes/record';
+import { Schema } from '../classes/schema';
 
 export class DataDriver {
     async selectAll(schema: Schema, filter: Filter) {

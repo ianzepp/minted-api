@@ -1,4 +1,4 @@
-import { System } from '~src/system';
+import { System } from '../system';
 
 export class UserSystem {
     constructor(private readonly system: System) {

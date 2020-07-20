@@ -4,7 +4,6 @@
         "declaration": true,
         "declarationMap": true,
         "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
         "module": "commonjs",
         "moduleResolution": "node",
         "noImplicitAny": true,
@@ -14,11 +13,9 @@
         "skipLibCheck": true,
         "sourceMap": true,
         "strict": true,
-        "target": "es5",
+        "target": "es6",
         "baseUrl": "./",
-        "paths": {
-            "~src/*": ["src/*"]
-        }
+        "paths": {}
     },
     "include": [
         "src/**/*"

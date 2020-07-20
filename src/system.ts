@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
 
 // Subsystems
-import { BulkSystem } from '~src/classes/bulk-system';
-import { DataSystem } from '~src/classes/data-system';
-import { MetaSystem } from '~src/classes/meta-system';
-import { UserSystem } from '~src/classes/user-system';
+import { BulkSystem } from './classes/bulk-system';
+import { DataSystem } from './classes/data-system';
+import { MetaSystem } from './classes/meta-system';
+import { UserSystem } from './classes/user-system';
 
 export class System {
     // Services
@@ -17,6 +17,9 @@ export class System {
     constructor(readonly options: _.Dictionary<any>) {
 
     }
+
+    /** Authenticate a request */
+    async authenticate() {}
 
     /** Switches to a new root context and returns a new `System` reference */
     async toRoot() {
