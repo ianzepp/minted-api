@@ -11,7 +11,7 @@ export class MetaSystem {
 
     }
 
-    toSchema(schema: SchemaType) {
+    async toSchema(schema: SchemaType) {
         if (typeof schema === 'string') {
             return new Schema(schema);
         }
@@ -19,7 +19,7 @@ export class MetaSystem {
         return schema;
     }
 
-    toFilter(filter: FilterType) {
+    async toFilter(filter: FilterType) {
         if (typeof filter === 'string') {
             return new Filter(filter);
         }
