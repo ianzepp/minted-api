@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
 
 // Subsystems
-import { BulkSystem } from 'classes/bulk-system';
-import { DataSystem } from 'classes/data-system';
-import { MetaSystem } from 'classes/meta-system';
-import { UserSystem } from 'classes/user-system';
+import { BulkSystem } from '~src/classes/bulk-system';
+import { DataSystem } from '~src/classes/data-system';
+import { MetaSystem } from '~src/classes/meta-system';
+import { UserSystem } from '~src/classes/user-system';
 
 export class System {
     // Services
