@@ -1,0 +1,19 @@
+{
+  "name": "minted-api",
+  "version": "1.0.0",
+  "description": "Minted API",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ianzepp/minted-api.git"
+  },
+  "author": "Ian Zepp <ian@ianzepp.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ianzepp/minted-api/issues"
+  },
+  "homepage": "https://github.com/ianzepp/minted-api#readme"
+}
