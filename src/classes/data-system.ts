@@ -1,9 +1,18 @@
 
 import { DataDriver } from '../classes/data-driver';
-import { FilterType } from '../classes/filter';
+import { Filter } from '../classes/filter';
 import { Record } from '../classes/record';
-import { SchemaType } from '../classes/schema';
+import { Schema } from '../classes/schema';
 import { System } from '../system';
+import { FlowInfo, FlowRing } from '../classes/flow-info';
+
+export enum DataOp{
+    Select = 'select',
+    Create = 'create',
+    Update = 'update',
+    Upsert = 'upsert',
+    Delete = 'delete',
+};
 
 export class DataSystem {
     constructor(private readonly system: System) {
@@ -13,27 +22,28 @@ export class DataSystem {
     // Internals
     readonly driver = new DataDriver();
 
+
     //
     // Collection methods
     //
 
-    async selectAll(schema: SchemaType, filter: FilterType) {
-        return [] as Record[];
+    async selectAll<T>(filter: Filter<T>) {
+        return [] as Record<T>[];
     }
 
-    async createAll(schema: SchemaType, change: Record[]) {
+    async createAll<T>(change: Record<T>[]) {
         return change;
     }
 
-    async updateAll(schema: SchemaType, change: Record[]) {
+    async updateAll<T>(change: Record<T>[]) {
         return change;
     }
 
-    async upsertAll(schema: SchemaType, change: Record[]) {
+    async upsertAll<T>(change: Record<T>[]) {
         return change;
     }
 
-    async deleteAll(schema: SchemaType, change: Record[]) {
+    async deleteAll<T>(change: Record<T>[]) {
         return change;
     }
 
@@ -41,35 +51,61 @@ export class DataSystem {
     // Individual methods
     //
 
-    async selectOne(schema: SchemaType, filter: FilterType) {
+    async selectOne<T>(filter: Filter<T>) {
         return {} as Record;
     }
 
-    async select404(schema: SchemaType, filter: FilterType) {
+    async select404<T>(filter: Filter<T>) {
         return {} as Record;
     }
 
-    async createOne(schema: SchemaType, change: Record) {
+    async createOne<T>(change: Record<T>) {
         return change;
     }
 
-    async updateOne(schema: SchemaType, change: Record) {
+    async updateOne<T>(change: Record<T>) {
         return change;
     }
 
-    async update404(schema: SchemaType, change: Record) {
+    async update404<T>(change: Record<T>) {
         return change;
     }
 
-    async upsertOne(schema: SchemaType, change: Record) {
+    async upsertOne<T>(change: Record<T>) {
         return change;
     }
 
-    async deleteOne(schema: SchemaType, change: Record) {
+    async deleteOne<T>(change: Record<T>) {
         return change;
     }
 
-    async delete404(schema: SchemaType, change: Record) {
+    async delete404<T>(change: Record<T>) {
         return change;
+    }
+
+    //
+    // Primary operation function
+    //
+
+    async run<T>(schema: Schema<T>, change: Record<T>[] | undefined, filter: Filter<T> | undefined, op: DataOp) {
+        // Initialize the schema if needed
+        await schema.render();
+
+        // Sanity
+        change = change ?? [];
+        filter = filter ?? schema.toFilter();
+
+        // Build a flow operation
+        let info = new FlowInfo<T>(schema, change || [], filter, op);
+
+        // Cycle through the flow steps
+        await this.system.flow.ring<T>(info, FlowRing.Init);
+        await this.system.flow.ring<T>(info, FlowRing.Prep);
+        await this.system.flow.ring<T>(info, FlowRing.Work);
+        await this.system.flow.ring<T>(info, FlowRing.Post);
+        await this.system.flow.ring<T>(info, FlowRing.Done);
+
+        // Done
+        return info.change as Record<T>[];
     }
 }

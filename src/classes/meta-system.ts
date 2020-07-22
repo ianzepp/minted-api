@@ -1,29 +1,18 @@
 import * as _ from 'lodash';
 
-import { Filter } from '../classes/filter';
-import { FilterType } from '../classes/filter';
 import { Schema } from '../classes/schema';
-import { SchemaType } from '../classes/schema';
 import { System } from '../system';
 
 export class MetaSystem {
-    constructor(private readonly system: System) {
+    constructor(private readonly system: System) {}
 
+    /** Returns an uninitialized schema reference (which may or may not exist / be visible) */
+    define<T>(schema_name: string): Schema<T> {
+        return new Schema<T>(this.system, schema_name);
     }
 
-    async toSchema(schema: SchemaType) {
-        if (typeof schema === 'string') {
-            return new Schema(schema);
-        }
-
-        return schema;
-    }
-
-    async toFilter(filter: FilterType) {
-        if (typeof filter === 'string') {
-            return new Filter(filter);
-        }
-
-        return filter;
+    /** Creates an uninitialized schema, and then initializes it */
+    async render<T>(schema_name: string): Promise<Schema<T>> {
+        return this.define<T>(schema_name).render();
     }
 }

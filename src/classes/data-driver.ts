@@ -6,23 +6,23 @@ import { Record } from '../classes/record';
 import { Schema } from '../classes/schema';
 
 export class DataDriver {
-    async selectAll(schema: Schema, filter: Filter) {
-        return [] as Record[];
+    async select<T>(schema: Schema<T>, filter: Filter<T>) {
+        return [] as Record<T>[];
     }
 
-    async createAll(schema: Schema, change: Record[]) {
+    async create<T>(schema: Schema<T>, change: Record<T>[]) {
         return change;
     }
 
-    async updateAll(schema: Schema, change: Record[]) {
+    async update<T>(schema: Schema<T>, change: Record<T>[]) {
         return change;
     }
 
-    async upsertAll(schema: Schema, change: Record[]) {
+    async upsert<T>(schema: Schema<T>, change: Record<T>[]) {
         return change;
     }
 
-    async deleteAll(schema: Schema, change: Record[]) {
+    async delete<T>(schema: Schema<T>, change: Record<T>[]) {
         return change;
     }
 }
