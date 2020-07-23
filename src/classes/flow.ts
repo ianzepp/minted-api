@@ -37,6 +37,11 @@ export abstract class Flow {
         return FlowRing.Prep;
     }
 
+    /** Returns the priority within the ring. Used for sorting flows. Typical values are 0 (high) to 1000 (low) */
+    onRingPriority(): number {
+        return 100;
+    }
+
     /** Returns `true` if the flow should be executed in a `root` context. Defaults to `true` */
     onRoot() {
         return true;
