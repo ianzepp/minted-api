@@ -5,5 +5,6 @@ export const KnexClient = Knex({
     client: 'sqlite3',
     connection: {
         filename: 'dst/sqlite3.db'
-    }
+    },
+    useNullAsDefault: true
 });
