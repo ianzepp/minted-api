@@ -1,15 +1,15 @@
 import * as _ from 'lodash';
 
 import { Flow } from '../classes/flow';
-import { FlowInfo, FlowRing } from '../classes/flow-info';
-import { FlowLocals } from '../classes/flow-locals';
-import { System } from '../system';
+import { FlowInfo } from '../classes/flow-info';
+import { FlowRing } from '../classes/flow-ring';
+import { System } from '../classes/system';
 
 export class FlowSystem {
     constructor(private readonly system: System) {}
 
     /** Executes a single ring cycle */
-    async ring<T>(info: FlowInfo<T>, ring: FlowRing) {
+    async ring(info: FlowInfo, ring: FlowRing) {
         // TODO
     }
 }

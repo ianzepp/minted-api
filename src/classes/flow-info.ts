@@ -2,26 +2,18 @@
 import { Filter } from '../classes/filter';
 import { Record } from '../classes/record';
 import { Schema } from '../classes/schema';
-import { DataOp } from '../classes/data-system';
+import { DataOp } from '../classes/data-op';
 
-export enum FlowRing {
-    Init,
-    Prep,
-    Work,
-    Post,
-    Done,
-};
-
-export class FlowInfo<T> {
+export class FlowInfo {
     constructor(
-        readonly schema: Schema<T>,
-        readonly change: Record<T>[],
-        readonly filter: Filter<T>,
+        readonly schema: Schema,
+        readonly change: Record[],
+        readonly filter: Filter,
         readonly op: DataOp) {}
 
     get system() {
         return this.schema.system;
-    }
+    } 
 
     isSelect() {
         return this.op === DataOp.Select;

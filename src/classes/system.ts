@@ -3,11 +3,11 @@ import * as _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 // Subsystems
-import { BulkSystem } from './classes/bulk-system';
-import { DataSystem } from './classes/data-system';
-import { FlowSystem } from './classes/flow-system';
-import { MetaSystem } from './classes/meta-system';
-import { UserSystem } from './classes/user-system';
+import { BulkSystem } from '../classes/bulk-system';
+import { DataSystem } from '../classes/data-system';
+import { FlowSystem } from '../classes/flow-system';
+import { MetaSystem } from '../classes/meta-system';
+import { UserSystem } from '../classes/user-system';
 
 export class SystemError extends Error {
     static UNIMPLEMENTED = 'unimplemented: This method is currently unimplemented';

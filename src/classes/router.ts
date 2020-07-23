@@ -3,7 +3,7 @@ import * as Http from 'http';
 import { match } from 'path-to-regexp';
 
 // API
-import { System, SystemError } from '../system';
+import { System, SystemError } from '../classes/system';
 
 export interface RouterResult {
     method: string | undefined,

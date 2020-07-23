@@ -3,17 +3,16 @@ import * as _ from 'lodash';
 import { Filter } from '../classes/filter';
 import { Record } from '../classes/record';
 import { RecordData } from '../classes/record';
-import { System } from '../system';
-import { SystemError } from '../system';
+import { System } from '../classes/system';
 
-export interface SchemaData {
+export interface SchemaData extends RecordData {
     name: string;
     description: string | null;
 }
 
-export class Schema<T> extends Record<SchemaData> {
-    constructor(system: System, schema_name: string) {
-        super(system, schema_name);
+export class Schema extends Record<SchemaData> {
+    constructor(system: System, readonly schema_name: string) {
+        super(system, 'system__schema');
     }
 
     /** PLACEHOLDER: Generates the internal data/info structures */
@@ -30,21 +29,21 @@ export class Schema<T> extends Record<SchemaData> {
 
     /** Generate a new filter */
     toFilter() {
-        return new Filter<T>(this.system, this.schema_name);
+        return new Filter(this.system, this.schema_name);
     }
 
     /** Proxy to `system.data.selectAll()` */
-    async selectAll(filter: Filter<T>) {
-        return this.system.data.selectAll<T>(filter);
+    async selectAll(filter: Filter) {
+        return this.system.data.selectAll(filter);
     }
 
     /** Proxy to `system.data.selectOne()` */
-    async selectOne(filter: Filter<T>) {
-        return this.system.data.selectOne<T>(filter);
+    async selectOne(filter: Filter) {
+        return this.system.data.selectOne(filter);
     }
 
     /** Proxy to `system.data.select404()` */
-    async select404(filter: Filter<T>) {
-        return this.system.data.select404<T>(filter);
+    async select404(filter: Filter) {
+        return this.system.data.select404(filter);
     }
 }

@@ -1,9 +1,10 @@
 
-import { FlowInfo, FlowRing } from '../classes/flow-info';
+import { FlowInfo } from '../classes/flow-info';
+import { FlowRing } from '../classes/flow-ring';
 import { Schema } from '../classes/schema';
 
-export abstract class Flow<T> {
-    constructor(readonly info: FlowInfo<T>) {}
+export abstract class Flow {
+    constructor(readonly info: FlowInfo) {}
 
     /** Proxy to `info.system` */
     get system() {
@@ -29,7 +30,7 @@ export abstract class Flow<T> {
     abstract async run(): Promise<unknown>;
 
     /** Returns the schema that applies to the flow. This method **MUST** be implemented */
-    abstract onSchema(): Schema<T> | string;
+    abstract onSchema(): Schema | string;
 
     /** Returns the ring when the flow should execute. Defaults to `FlowRing.Prep` */
     onRing(): FlowRing {

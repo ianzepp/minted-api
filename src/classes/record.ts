@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 
 import { Schema } from '../classes/schema';
-import { System } from '../system';
-import { SystemError } from '../system';
+import { System } from '../classes/system';
+import { SystemError } from '../classes/system';
 
 export interface RecordData extends _.Dictionary<any> {}
 
@@ -19,13 +19,13 @@ export interface RecordInfo {
     access_read: string | null;
     access_deny: string | null;
 }
-export interface RecordJson<T> {
-    data: T;
+export interface RecordJson {
+    data: RecordData;
     info: RecordInfo;
 }
 
-export class Record<T extends RecordData = RecordData> implements RecordJson<T> {
-    private _schema: Schema<T> | undefined;
+export class Record<T extends RecordData = RecordData> implements RecordJson {
+    private _schema: Schema | undefined;
     private _data: T | undefined;
     private _info: RecordInfo | undefined;
 
@@ -65,26 +65,26 @@ export class Record<T extends RecordData = RecordData> implements RecordJson<T> 
         return this;
     }
 
-    /** Proxy to `system.data.createOne()` and passes in this record */
-    async create() {
-        return this.system.data.createOne<T>(this);
-    }
-
-    /** Proxy to `system.data.updateOne()` and passes in this record */
-    async update() {
-        return this.system.data.updateOne<T>(this);
-    }
-
-    /** Proxy to `system.data.deleteOne()` and passes in this record */
-    async delete() {
-        return this.system.data.deleteOne<T>(this);
-    }
+    // /** Proxy to `system.data.createOne()` and passes in this record */
+    // async create(): Promise<Record<ObjectType>> {
+    //     return this.system.data.createOne(this) as unknown as Record<ObjectType>;
+    // }
+    //
+    // /** Proxy to `system.data.updateOne()` and passes in this record */
+    // async update(): Promise<Record<ObjectType>> {
+    //     return this.system.data.updateOne(this) as unknown as Record<ObjectType>;
+    // }
+    //
+    // /** Proxy to `system.data.deleteOne()` and passes in this record */
+    // async delete(): Promise<Record<ObjectType>> {
+    //     return this.system.data.deleteOne(this) as unknown as Record<ObjectType>;
+    // }
 
     //
     // Helpers
     //
 
     private _to_schema() {
-        return this.system.meta.define<T>(this._schema_name);
+        return this.system.meta.define(this._schema_name);
     }
 }

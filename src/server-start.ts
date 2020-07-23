@@ -1,10 +1,10 @@
 import * as Http from 'http';
 
 // API
-import { System } from './system';
-import { Router } from './classes/router';
 import { DataRouter } from './routers/data-router';
 import { MetaRouter } from './routers/meta-router';
+import { Router } from './classes/router';
+import { System } from './classes/system';
 
 // Create the server
 const server = Http.createServer(async (req: Http.IncomingMessage, res: Http.ServerResponse) => {
