@@ -19,6 +19,7 @@ export interface RecordInfo {
     access_read: string | null;
     access_deny: string | null;
 }
+
 export interface RecordJson {
     data: RecordData;
     info: RecordInfo;
@@ -29,10 +30,16 @@ export class Record<T extends RecordData = RecordData> implements RecordJson {
     private _data: T | undefined;
     private _info: RecordInfo | undefined;
 
-    constructor(readonly system: System, private readonly _schema_name: string, private readonly _record_id?: string) {}
+    constructor(readonly system: System, private readonly _schema_name: string, private readonly _native?: RecordData) {}
 
+    /** Returns either the discovered schema's name, or the name of the schema when it was passed into the constructor */
     get schema_name() {
-        return this._schema_name;
+        return this._schema ? this._schema.schema_name : this._schema_name;
+    }
+
+    /** Returns the original "native" data that was used to generate this record */
+    get native() {
+        return this._native;
     }
 
     get schema() {
