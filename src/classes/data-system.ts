@@ -7,6 +7,7 @@ import { FlowRing } from '../classes/flow-ring';
 import { Record } from '../classes/record';
 import { Schema } from '../classes/schema';
 import { System } from '../classes/system';
+import { SystemError } from '../classes/system-error';
 
 export class DataSystem {
     constructor(private readonly system: System) {

@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 
 import { Record } from '../classes/record';
 import { System } from '../classes/system';
-import { SystemError } from '../classes/system';
 
 export interface FilterData {
     where?: any[],

@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 
 import { Schema } from '../classes/schema';
 import { System } from '../classes/system';
-import { SystemError } from '../classes/system';
+import { SystemError } from '../classes/system-error';
 
 export interface RecordData extends _.Dictionary<any> {}
 
