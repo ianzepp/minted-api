@@ -3,6 +3,7 @@ import { Filter } from '../classes/filter';
 import { Record } from '../classes/record';
 import { Schema } from '../classes/schema';
 import { DataOp } from '../classes/data-op';
+import { FlowRing } from '../classes/flow-ring';
 
 export class FlowInfo {
     constructor(
@@ -13,7 +14,7 @@ export class FlowInfo {
 
     get system() {
         return this.schema.system;
-    } 
+    }
 
     isSelect() {
         return this.op === DataOp.Select;
@@ -33,5 +34,16 @@ export class FlowInfo {
 
     isDelete() {
         return this.op === DataOp.Delete;
+    }
+
+    async initialize() {
+        // Initialize the schema if needed
+        await this.schema.render();
+
+        // nothing else to do right now
+    }
+
+    async flow(ring: FlowRing) {
+        // TODO
     }
 }

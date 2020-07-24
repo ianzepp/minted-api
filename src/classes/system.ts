@@ -5,7 +5,6 @@ import { v4 as uuid } from 'uuid';
 // Subsystems
 import { BulkSystem } from '../classes/bulk-system';
 import { DataSystem } from '../classes/data-system';
-import { FlowSystem } from '../classes/flow-system';
 import { KnexSystem } from '../classes/knex-system';
 import { MetaSystem } from '../classes/meta-system';
 import { UserSystem } from '../classes/user-system';
@@ -14,7 +13,6 @@ export class System {
     // Services
     public readonly bulk = new BulkSystem(this);
     public readonly data = new DataSystem(this);
-    public readonly flow = new FlowSystem(this);
     public readonly knex = new KnexSystem(this);
     public readonly meta = new MetaSystem(this);
     public readonly user = new UserSystem(this);
