@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 
 import { Filter } from '../classes/filter';
+import { FilterData } from '../classes/filter';
 import { Record } from '../classes/record';
 import { RecordData } from '../classes/record';
 import { System } from '../classes/system';
@@ -28,8 +29,8 @@ export class Schema extends Record<SchemaData> {
     }
 
     /** Generate a new filter */
-    toFilter() {
-        return new Filter(this.system, this.schema_name);
+    toFilter(source?: FilterData) {
+        return new Filter(this.system, this.schema_name, source);
     }
 
     /** Proxy to `system.data.selectAll()` */

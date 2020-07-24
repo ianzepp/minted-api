@@ -31,4 +31,19 @@ export class Filter extends Record<FilterData> {
     constructor(system: System, schema_name: string, readonly source?: FilterData) {
         super(system, schema_name);
     }
+
+    /** Proxy to `system.data.selectAll()` */
+    async selectAll() {
+        return this.system.data.selectAll(this);
+    }
+
+    /** Proxy to `system.data.selectOne()` */
+    async selectOne() {
+        return this.system.data.selectOne(this);
+    }
+
+    /** Proxy to `system.data.select404()` */
+    async select404() {
+        return this.system.data.select404(this);
+    }
 }

@@ -1,61 +1,63 @@
 import * as Http from 'http';
 
 // API
-import { DataRouter } from './routers/data-router';
-import { MetaRouter } from './routers/meta-router';
 import { Router } from './classes/router';
+import { RouterResult } from './classes/router';
 import { System } from './classes/system';
+import { SystemError } from './classes/system-error';
+
+// Routers
+import DataSelectAll from './routers/data-select-all';
+import DataSelectOne from './routers/data-select-one';
 
 // Create the server
 const server = Http.createServer(async (req: Http.IncomingMessage, res: Http.ServerResponse) => {
-    // Generate the placeholder result
-    let result = {
-        path: req.url,
-        method: req.method,
-        status: 0,
-        data: undefined as any
-    };
-
+    // Run the process
     try {
         // Generate the system
         let system = new System({});
-        let router: Router;
 
-        // Check the user
+        // Generate all routers linked to this request
+        let routers: Router[] = [
+            new DataSelectOne(system, req, res),
+            new DataSelectAll(system, req, res),
+        ];
+
+        // Find the first runnable router
+        let active_router = routers.find(router => {
+            return router.isRunnable() && router.isRouterPath();
+        });
+
+        // Nothing was found?
+        if (active_router === undefined) {
+            throw new SystemError(404, 'Unknown route %j', req.url);
+        }
+
+        // Start execution
+        console.warn('>>', req.method, req.url);
+
+        // Process the user
         await system.authenticate();
 
-        // Which router should handle this?
-        if (result.path === undefined) {
-            throw new Error('Undefined request path');
-        }
-
-        else if (result.path === '/api/data') {
-            router = new DataRouter(system, req, res);
-        }
-
-        else if (result.path === '/api/meta') {
-            router = new MetaRouter(system, req, res);
-        }
-
-        else {
-            throw new Error('Unsupported request path ' + result.path);
-        }
-
         // Process route
-        result.data = await router.run() ?? null;
+        let result = await active_router.runsafe();
 
-        // Status is always 200 when no errors
-        result.status = 200;
+        // Return the result
+        res.setHeader('Content-Type', 'application/json');
+        res.write(JSON.stringify(result));
+        res.end();
     }
 
     catch (error) {
-        result.status = 500;
-        result.data = error.message;
-    }
+        // Generate the failure result
+        let result: RouterResult = {
+            method: req.method,
+            path: req.url,
+            code: error.code ?? 500,
+            data: error.message,
+        };
 
-    finally {
-        console.warn('res: %j', result);
-
+        // Return the result
         res.setHeader('Content-Type', 'application/json');
         res.write(JSON.stringify(result));
         res.end();

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as Http from 'http';
-import { match } from 'path-to-regexp';
+import { pathToRegexp, match } from 'path-to-regexp';
 
 // API
 import { System } from '../classes/system';
@@ -13,18 +13,13 @@ export interface RouterResult {
     data: any
 }
 
-export class Router {
+export abstract class Router {
     // Stores the discovered path params
     private _params: _.Dictionary<string> | undefined;
     private _search: _.Dictionary<any> | undefined;
 
     constructor(readonly system: System, readonly req: Http.IncomingMessage, readonly res: Http.ServerResponse) {
 
-    }
-
-    /** Returns the router path with named parameters (eg, "/api/data/:schema/:id?") */
-    toRouterPath() {
-        return '/';
     }
 
     /** Returns the evaluated named parameters */
@@ -38,102 +33,109 @@ export class Router {
     }
 
     async runsafe() {
+        let result: RouterResult = {
+            method: this.req.method,
+            path: this.req.url || '/',
+            code: 0,
+            data: null
+        }
+
         try {
-            return this.run();
+            result.data = await this.system.knex.transact(() => this.run());
+            result.code = 200;
         }
 
         catch (error) {
-            return this.toResult(500, error.message);
+            console.error(error);
+
+            result.data = error.message;
+            result.code = error.code || 500;
         }
+
+        return result;
     }
 
-    async run(): Promise<RouterResult> {
-        if (this.isSelect()) {
-            return this.onSelect();
-        }
+    /** Defines the code to be executed. This method **MUST** be implemented */
+    abstract async run(): Promise<unknown>;
 
-        if (this.isCreate()) {
-            return this.onCreate();
-        }
-
-        if (this.isUpdate()) {
-            return this.onUpdate();
-        }
-
-        if (this.isUpsert()) {
-            return this.onUpsert();
-        }
-
-        if (this.isDelete()) {
-            return this.onDelete();
-        }
-
-        if (this.isOption()) {
-            return this.onOption();
-        }
-
-        throw new SystemError(500, SystemError.UNSUPPORTED, this.req.method)
-    }
-
+    /** Returns `true` if this request is an HTTP OPTION request */
     isOption() {
         return this.req.method === 'OPTION';
     }
 
+    /** Returns `true` if this request is an HTTP GET request */
     isSelect() {
         return this.req.method === 'GET';
     }
 
+    /** Returns `true` if this request is an HTTP POST request */
     isCreate() {
         return this.req.method === 'POST';
     }
 
+    /** Returns `true` if this request is an HTTP PATCH request */
     isUpdate() {
         return this.req.method === 'PATCH';
     }
 
+    /** Returns `true` if this request is an HTTP PUT request */
     isUpsert() {
         return this.req.method === 'PUT';
     }
 
+    /** Returns `true` if this request is an HTTP DELETE request */
     isDelete() {
         return this.req.method === 'DELETE';
     }
 
-    async onOption(): Promise<RouterResult> {
-        return this.toUnimplementedRoute();
+    /** Returns the target router path, along with named parameters (eg, "/api/data/:schema/:id?") */
+    onRouterPath() {
+        return '/';
     }
 
-    async onSelect(): Promise<RouterResult> {
-        return this.toUnimplementedRoute();
+    /** Returns `true` if the request route matches this router */
+    isRouterPath() {
+        return pathToRegexp(this.onRouterPath()).exec(this.req.url ?? '/') !== null;
     }
 
-    async onCreate(): Promise<RouterResult> {
-        return this.toUnimplementedRoute();
+    /** Returns `true` if the router should be executed in a `root` context. Defaults to `true` */
+    onRoot() {
+        return true;
     }
 
-    async onUpdate(): Promise<RouterResult> {
-        return this.toUnimplementedRoute();
+    /** Returns `true` if the router should be executed in a `user` context. Defaults to `true` */
+    onUser() {
+        return true;
     }
 
-    async onUpsert(): Promise<RouterResult> {
-        return this.toUnimplementedRoute();
+    /** Returns `true` if the router should run under a `select` context. Defaults to `false` */
+    onSelect() {
+        return false;
     }
 
-    async onDelete(): Promise<RouterResult> {
-        return this.toUnimplementedRoute();
+    /** Returns `true` if the router should run under a `create` context. Defaults to `false` */
+    onCreate() {
+        return false;
     }
 
-    toResult(code: number = 200, data: any = null): RouterResult {
-        return {
-            method: this.req.method,
-            path: this.req.url,
-            code: code,
-            data: data
-        };
+    /** Returns `true` if the router should run under a `update` context. Defaults to `false` */
+    onUpdate() {
+        return false;
     }
 
-    toUnimplementedRoute() {
-        return this.toResult(400, 'Unimplemented route');
+    /** Returns `true` if the router should run under a `upsert` context. Defaults to `false` */
+    onUpsert() {
+        return false;
+    }
+
+    /** Returns `true` if the router should run under a `select` context. Defaults to `false` */
+    onDelete() {
+        return false;
+    }
+
+    /** Returns `true` if the router should be executed (at all). Defaults to `true` */
+    isRunnable() {
+        return true;
     }
 
     //
@@ -141,7 +143,7 @@ export class Router {
     //
 
     private _parse_url() {
-        return new URL(this.req.url ?? '/');
+        return new URL('http://localhost' + this.req.url);
     }
 
     private _to_params() {
