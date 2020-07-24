@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import Knex from 'knex';
 
 import { System } from '../classes/system';

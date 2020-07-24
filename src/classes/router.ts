@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import * as Http from 'http';
 import { pathToRegexp, match } from 'path-to-regexp';
 

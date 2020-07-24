@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import { DataOp } from '../classes/data-op';
 import { Filter } from '../classes/filter';

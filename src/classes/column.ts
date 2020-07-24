@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import { ColumnData } from '../classes/column-data';
 import { Record } from '../classes/record';

@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import { Record } from '../classes/record';
 import { System } from '../classes/system';

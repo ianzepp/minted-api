@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import { Filter } from '../classes/filter';
 import { FilterData } from '../classes/filter';
