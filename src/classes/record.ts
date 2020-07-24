@@ -27,7 +27,7 @@ export interface RecordJson {
 
 export class Record<T extends RecordData = RecordData> implements RecordJson {
     private _schema: Schema | undefined;
-    private _data: T | undefined;
+    private _data: T | undefined = {} as T;
     private _info: RecordInfo | undefined;
 
     constructor(readonly system: System, private readonly _schema_name: string, private readonly _native?: RecordData) {}
@@ -50,6 +50,11 @@ export class Record<T extends RecordData = RecordData> implements RecordJson {
         return SystemError.test(this._data, 500, SystemError.UNINITIALIZED);
     }
 
+    /** Returns the difference between the original record data, and data that has changed during this operation */
+    get diff(): T {
+        return this.data; // TODO: implement this correctly
+    }
+
     get info(): RecordInfo {
         return SystemError.test(this._info, 500, SystemError.UNINITIALIZED);
     }
@@ -57,6 +62,15 @@ export class Record<T extends RecordData = RecordData> implements RecordJson {
     /** Returns `true` if the internal `data` property has been initialized with actual data */
     isLoaded() {
         return this._data === undefined;
+    }
+
+    /** Returns a JSON representation of this record */
+    toJSON() {
+        return {
+            schema_name: this.schema_name,
+            data: this.data,
+            info: this.info
+        };
     }
 
     /** Accepts `data`/`info` values and stores them internally */

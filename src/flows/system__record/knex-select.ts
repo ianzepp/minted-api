@@ -2,11 +2,10 @@ import * as _ from 'lodash';
 
 import { Flow } from '../../classes/flow';
 import { FlowRing } from '../../classes/flow-ring';
-import { KnexClient } from '../../classes/knex-client';
 import { Record } from '../../classes/record';
 import { RecordData } from '../../classes/record';
 
-export class KnexSelect extends Flow {
+export default class extends Flow {
     onSchema() {
         return '*';
     }
@@ -19,12 +18,8 @@ export class KnexSelect extends Flow {
         return true;
     }
 
-    isRunnable() {
-        return true; // return this.schema.driver === 'knex';
-    }
-
     async run() {
-        let knex = KnexClient(this.schema.schema_name);
+        let knex = this.system.knex.tx(this.schema.schema_name);
 
         // Find all results, per the filter criteria
         let rows = await knex;
