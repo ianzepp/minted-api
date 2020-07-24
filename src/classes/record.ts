@@ -1,12 +1,14 @@
 import _ from 'lodash';
 
 import { Schema } from '../classes/schema';
+import { SchemaName } from '../classes/schema';
+import { SchemaType } from '../classes/schema';
 import { System } from '../classes/system';
 import { SystemError } from '../classes/system-error';
 
-export interface RecordData extends _.Dictionary<any> {}
+export type RecordData = _.Dictionary<any>;
 
-export interface RecordInfo {
+export type RecordInfo = {
     id: string;
     created_at: string;
     created_by: string;
@@ -20,43 +22,75 @@ export interface RecordInfo {
     access_deny: string | null;
 }
 
-export interface RecordJson {
+export type RecordJson = {
+    type: SchemaName;
     data: RecordData;
     info: RecordInfo;
 }
 
 export class Record<T extends RecordData = RecordData> implements RecordJson {
-    private _schema: Schema | undefined;
+    private _type: SchemaName;
     private _data: T | undefined = {} as T;
+    private _diff: T | undefined = {} as T;
     private _info: RecordInfo | undefined;
 
-    constructor(readonly system: System, private readonly _schema_name: string, private readonly _native?: RecordData) {}
+    // Related objects
+    constructor(readonly system: System, schema_type: SchemaType, private readonly _source?: Record | RecordJson | T) {
+        // Schema Type is Schema
+        if (schema_type instanceof Schema) {
+            this._type = schema_type.qualified_name;
+        }
 
-    /** Returns either the discovered schema's name, or the name of the schema when it was passed into the constructor */
-    get schema_name() {
-        return this._schema ? this._schema.schema_name : this._schema_name;
+        else {
+            this._type = schema_type;
+        }
+
+        // Record Source is missing..
+        if (_source === undefined) {
+            return; // nothing to import
+        }
+
+        // Source is Record
+        else if (_source instanceof Record) {
+            this._data = _source._data as T;
+            this._info = _source._info;
+        }
+
+        // Source is RecordJson
+        else if (_.isPlainObject(_source) && _source.type && _source.data) {
+            // TODO
+        }
+
+        // Source is T
+        else if (_.isPlainObject(_source)) {
+            // TODO
+        }
+
+        // Unknown source data
+        else {
+            throw new SystemError(500, 'Unknown record source format: %j', _source);
+        }
     }
 
-    /** Returns the original "native" data that was used to generate this record */
-    get native() {
-        return this._native;
-    }
-
-    get schema() {
-        return this._schema ?? (this._schema = this._to_schema());
+    get type(): SchemaName {
+        return this._type;
     }
 
     get data(): T {
         return SystemError.test(this._data, 500, SystemError.UNINITIALIZED);
     }
 
-    /** Returns the difference between the original record data, and data that has changed during this operation */
     get diff(): T {
-        return this.data; // TODO: implement this correctly
+        return SystemError.test(this._diff, 500, SystemError.UNINITIALIZED);
     }
 
     get info(): RecordInfo {
         return SystemError.test(this._info, 500, SystemError.UNINITIALIZED);
+    }
+
+    /** Returns the original source data that was used to generate this record */
+    get source() {
+        return this._source;
     }
 
     /** Returns `true` if the internal `data` property has been initialized with actual data */
@@ -67,7 +101,7 @@ export class Record<T extends RecordData = RecordData> implements RecordJson {
     /** Returns a JSON representation of this record */
     toJSON() {
         return {
-            schema_name: this.schema_name,
+            type: this.type,
             data: this.data,
             info: this.info
         };
@@ -84,28 +118,5 @@ export class Record<T extends RecordData = RecordData> implements RecordJson {
     async unload() {
         this._data = undefined;
         return this;
-    }
-
-    // /** Proxy to `system.data.createOne()` and passes in this record */
-    // async create(): Promise<Record<ObjectType>> {
-    //     return this.system.data.createOne(this) as unknown as Record<ObjectType>;
-    // }
-    //
-    // /** Proxy to `system.data.updateOne()` and passes in this record */
-    // async update(): Promise<Record<ObjectType>> {
-    //     return this.system.data.updateOne(this) as unknown as Record<ObjectType>;
-    // }
-    //
-    // /** Proxy to `system.data.deleteOne()` and passes in this record */
-    // async delete(): Promise<Record<ObjectType>> {
-    //     return this.system.data.deleteOne(this) as unknown as Record<ObjectType>;
-    // }
-
-    //
-    // Helpers
-    //
-
-    private _to_schema() {
-        return this.system.meta.define(this._schema_name);
     }
 }
