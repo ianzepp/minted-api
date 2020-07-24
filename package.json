@@ -4,8 +4,8 @@
   "description": "Minted API",
   "main": "index.js",
   "scripts": {
-      "compile-clean": "bash ./scripts/compile-clean.sh",
-      "compile": "bash ./scripts/compile.sh",
+    "compile-clean": "bash ./scripts/compile-clean.sh",
+    "compile": "bash ./scripts/compile.sh",
     "postinstall": "link-module-alias",
     "start": "bash ./scripts/start.sh",
     "test": "bash ./scripts/test.sh"
@@ -28,6 +28,7 @@
     "knex": "^0.21.2",
     "lodash": "^4.17.19",
     "path-to-regexp": "^6.1.0",
+    "sqlite3": "^5.0.0",
     "typescript": "^3.9.7",
     "uuid": "^8.2.0"
   }
