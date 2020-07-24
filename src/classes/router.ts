@@ -17,6 +17,7 @@ export abstract class Router {
     // Stores the discovered path params
     private _params: _.Dictionary<string> | undefined;
     private _search: _.Dictionary<any> | undefined;
+    private _change: _.Dictionary<any> | Array<_.Dictionary<any>> | undefined;
 
     constructor(readonly system: System, readonly req: Http.IncomingMessage, readonly res: Http.ServerResponse) {
 
@@ -32,6 +33,12 @@ export abstract class Router {
         return this._search ?? (this._search = this._to_search());
     }
 
+    /** Returns the change data from the HTTP body (either an object or an array) */
+    get change() {
+        return this._change ?? (this._change = this._to_change());
+    }
+
+    /** Executes the router `run()` method, wrapped in a try/catch block */
     async runsafe() {
         let result: RouterResult = {
             method: this.req.method,
@@ -152,5 +159,9 @@ export abstract class Router {
 
     private _to_search() {
         return this._parse_url().searchParams;
+    }
+
+    private _to_change() {
+        return []; // TODO - implement body data
     }
 }
