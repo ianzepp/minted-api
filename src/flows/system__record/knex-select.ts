@@ -2,8 +2,6 @@ import _ from 'lodash';
 
 import { Flow } from '../../classes/flow';
 import { FlowRing } from '../../classes/flow-ring';
-import { Record } from '../../classes/record';
-import { RecordData } from '../../classes/record';
 
 export default class extends Flow {
     onSchema() {
@@ -19,17 +17,13 @@ export default class extends Flow {
     }
 
     async run() {
-        let knex = this.system.knex.tx(this.schema.schema_name);
+        let knex = this.system.knex.tx(this.schema.qualified_name);
 
         // Find all results, per the filter criteria
         let rows = await knex;
 
         // Convert to records
         this.change.length = 0;
-        this.change.push(... rows.map(native => this._to_record(native)));
-    }
-
-    private _to_record(native: RecordData) {
-        return new Record(this.system, this.schema.schema_name, native);
+        this.change.push(... rows.map(native => this.schema.toRecord(native)));
     }
 }

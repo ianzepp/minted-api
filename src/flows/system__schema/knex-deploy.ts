@@ -32,10 +32,10 @@ export default class extends Flow {
         // Convert the schema record into actual knex "createTable" calls
         for(let record of this.change) {
             // Create a schema placeholder
-            let schema = new Schema(this.system, record.data.name);
+            let schema = this.system.meta.toSchema(record.data.name);
 
             // Add the table data
-            await knex.schema.createTable(schema.schema_name, table => {
+            await knex.schema.createTable(schema.qualified_name, table => {
                 table.uuid('id').primary();
 
                 // Timestamps
