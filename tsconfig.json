@@ -4,7 +4,7 @@
         "declaration": true,
         "declarationMap": true,
         "esModuleInterop": true,
-        "module": "commonjs",
+        "module": "es6",
         "moduleResolution": "node",
         "noImplicitAny": true,
         "outDir": "dst",
