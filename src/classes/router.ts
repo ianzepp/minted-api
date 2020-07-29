@@ -24,17 +24,17 @@ export abstract class Router {
     }
 
     /** Returns the evaluated named parameters */
-    get params() {
+    get params(): _.Dictionary<string> {
         return this._params ?? (this._params = this._to_params());
     }
 
     /** Returns the search data (from either the URL or the body) */
-    get search() {
+    get search(): _.Dictionary<any> {
         return this._search ?? (this._search = this._to_search());
     }
 
     /** Returns the change data from the HTTP body (either an object or an array) */
-    get change() {
+    get change(): _.Dictionary<any> | Array<_.Dictionary<any>> {
         return this._change ?? (this._change = this._to_change());
     }
 
@@ -48,13 +48,20 @@ export abstract class Router {
         }
 
         try {
-            result.data = await this.system.knex.transact(() => this.run());
+            // Run the router validation, followed by the implementation
+            let data = await this.system.knex.transact(async () => {
+                return this.validate().then(() => this.run());
+            });
+
+            // Save the results
+            result.data = data;
             result.code = 200;
         }
 
         catch (error) {
             console.error(error);
 
+            // Save the result error
             result.data = error.message;
             result.code = error.code || 500;
         }
@@ -62,8 +69,15 @@ export abstract class Router {
         return result;
     }
 
-    /** Defines the code to be executed. This method **MUST** be implemented */
-    abstract async run(): Promise<unknown>;
+    /** Defines the router validation code (if any) */
+    async validate(): Promise<any> {
+        // no default implementation
+    }
+
+    /** Defines the code to be executed. */
+    async run(): Promise<any> {
+        // no default implementation
+    }
 
     /** Returns `true` if this request is an HTTP OPTION request */
     isOption() {

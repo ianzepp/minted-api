@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import Chai from 'chai';
 
 // API
 import { Router } from '../classes/router';
@@ -9,19 +10,19 @@ export default class extends Router {
         return '/api/data/:schema';
     }
 
-    onCreate() {
+    onUpsert() {
         return true;
     }
 
+    async validate() {
+        Chai.expect(this.params).property('schema').a('string').not.empty;
+        Chai.expect(this.change).a('array').not.empty;
+    }
+
     async run() {
+        let change = this.change as _.Dictionary<any>[];
         let schema = this.system.meta.toSchema(this.params.schema);
 
-        if (_.isArray(this.change)) {
-            return schema.createAll(this.change);
-        }
-
-        else {
-            return schema.createOne(this.change);
-        }
+        return schema.upsertAll(change);
     }
 }

@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import Chai from 'chai';
 
 // API
 import { Router } from '../classes/router';
@@ -11,6 +12,11 @@ export default class extends Router {
 
     onSelect() {
         return true;
+    }
+
+    async validate() {
+        Chai.expect(this.params).property('schema').is('string').not.empty;
+        Chai.expect(this.params).property('record').is('string').not.empty;
     }
 
     async run() {

@@ -10,18 +10,19 @@ export default class extends Router {
         return '/api/data/:schema';
     }
 
-    onSelect() {
+    onCreate() {
         return true;
     }
 
     async validate() {
-        Chai.expect(this.params).property('schema').is('string').not.empty;
+        Chai.expect(this.params).property('schema').a('string').not.empty;
+        Chai.expect(this.change).a('array').not.empty;
     }
 
     async run() {
+        let change = this.change as _.Dictionary<any>[];
         let schema = this.system.meta.toSchema(this.params.schema);
-        let filter = schema.toFilter(this.search);
 
-        return filter.selectAll();
+        return schema.createAll(change);
     }
 }
