@@ -167,15 +167,15 @@ export abstract class Router {
         return new URL('http://localhost' + this.req.url);
     }
 
-    private _to_params() {
+    private _to_params(): _.Dictionary<any> {
         return _.get(match(this._parse_url().pathname), 'params') as _.Dictionary<string> || {};
     }
 
-    private _to_search() {
+    private _to_search(): _.Dictionary<any> {
         return this._parse_url().searchParams;
     }
 
-    private _to_change() {
+    private _to_change(): Array<_.Dictionary<any>> {
         return []; // TODO - implement body data
     }
 }

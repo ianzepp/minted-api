@@ -2,6 +2,9 @@ import _ from 'lodash';
 // import { format } from 'util';
 import { v4 as uuid } from 'uuid';
 
+// API
+import { RecordInfo } from '../classes/record';
+
 // Subsystems
 import { BulkSystem } from '../classes/bulk-system';
 import { DataSystem } from '../classes/data-system';
@@ -33,7 +36,7 @@ export class System {
     }
 
     /** Returns a new set of record info properties */
-    info() {
+    info(): RecordInfo {
         return {
             access_deny: null,
             access_edit: null,
