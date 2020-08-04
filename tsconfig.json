@@ -1,10 +1,9 @@
 {
     "compilerOptions": {
         "allowJs": false,
-        "declaration": true,
-        "declarationMap": true,
+        "baseUrl": "./",
         "esModuleInterop": true,
-        "module": "es6",
+        "module": "commonjs",
         "moduleResolution": "node",
         "noImplicitAny": true,
         "outDir": "dst",
@@ -12,16 +11,14 @@
         "removeComments": true,
         "skipLibCheck": true,
         "sourceMap": true,
-        "strict": true,
-        "target": "es6",
-        "baseUrl": "./",
-        "paths": {}
+        "target": "es5"
     },
     "include": [
         "src/**/*"
     ],
     "exclude": [
-        "node_modules",
-        "**/*.spec.ts"
+        "src/**/*.spec.ts",
+        "tests/**/*.spec.ts",
+        "node_modules"
     ]
 }

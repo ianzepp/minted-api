@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Minted API",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "compile-clean": "bash ./run/compile-clean.sh",
     "compile": "bash ./run/compile.sh",
