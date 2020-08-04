@@ -1,8 +1,10 @@
 import _ from 'lodash';
 
+// API
+import { FlowRing } from '../../typedefs/flow';
+
+// Classes
 import { Flow } from '../../classes/flow';
-import { FlowRing } from '../../classes/flow-ring';
-import { Schema } from '../../classes/schema';
 
 /**
  * This flow executes when a schema is created. Once the schema "record" is inserted
@@ -18,7 +20,7 @@ export default class extends Flow {
     }
 
     onRing() {
-        return FlowRing.Post;
+        return Flow.RING_POST;
     }
 
     onCreate() {
@@ -35,7 +37,7 @@ export default class extends Flow {
             let schema = this.system.meta.toSchema(record.data.name);
 
             // Add the table data
-            await knex.schema.createTable(schema.qualified_name, table => {
+            await knex.schema.createTable(schema.type, table => {
                 table.uuid('id').primary();
 
                 // Timestamps

@@ -1,8 +1,6 @@
 import _ from 'lodash';
 
 import { Flow } from '../../classes/flow';
-import { FlowRing } from '../../classes/flow-ring';
-import { Column } from '../../classes/column';
 
 export default class extends Flow {
     onSchema() {
@@ -10,7 +8,7 @@ export default class extends Flow {
     }
 
     onRing() {
-        return FlowRing.Post;
+        return Flow.RING_POST;
     }
 
     onCreate() {
@@ -18,12 +16,6 @@ export default class extends Flow {
     }
 
     async run() {
-        // Setup knex, using the current transaction
-        let knex = this.system.knex.driver;
 
-        // Convert the column record into actual knex "createTable" calls
-        for(let record of this.change) {
-            // TODO
-        }
     }
 }

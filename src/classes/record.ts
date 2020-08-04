@@ -1,74 +1,61 @@
 import _ from 'lodash';
 
-import { Schema } from '../classes/schema';
-import { SchemaName } from '../classes/schema';
-import { SchemaType } from '../classes/schema';
+// API
+import { RecordData } from '../typedefs/record';
+import { RecordDiff } from '../typedefs/record';
+import { RecordI18N } from '../typedefs/record';
+import { RecordInfo } from '../typedefs/record';
+import { RecordJson } from '../typedefs/record';
+import { RecordMeta } from '../typedefs/record';
+import { SchemaName } from '../typedefs/schema';
+import { SchemaType } from '../typedefs/schema';
+
+// Classes
 import { System } from '../classes/system';
 import { SystemError } from '../classes/system-error';
 
-export type RecordData = _.Dictionary<any>;
-
-export type RecordInfo = {
-    id: string;
-    created_at: string;
-    created_by: string;
-    updated_at: string;
-    updated_by: string;
-    trashed_at: string | null;
-    trashed_by: string | null;
-    access_full: string | null;
-    access_edit: string | null;
-    access_read: string | null;
-    access_deny: string | null;
-}
-
-export type RecordJson = {
-    type: SchemaName;
-    data: RecordData;
-    info: RecordInfo;
-}
-
-export class Record<T extends RecordData = RecordData> implements RecordJson {
+export class Record implements RecordInfo {
     private _type: SchemaName;
-    private _data: T | undefined = {} as T;
-    private _diff: T | undefined = {} as T;
-    private _info: RecordInfo | undefined;
+    private _data: RecordData | undefined = {} as RecordData;
+    private _diff: RecordDiff | undefined = {} as RecordDiff;
+    private _i18n: RecordI18N | undefined = {} as RecordI18N;
+    private _meta: RecordMeta | undefined;
 
     // Related objects
-    constructor(readonly system: System, schema_type: SchemaType, private readonly _source?: Record | RecordJson | T) {
+    constructor(readonly system: System, schema_type: SchemaType, source?: RecordJson | RecordData) {
         // Schema Type is Schema
-        if (schema_type instanceof Schema) {
-            this._type = schema_type.qualified_name;
-        }
-
-        else {
+        if (typeof schema_type === 'string') {
             this._type = schema_type;
         }
 
+        else {
+            this._type = schema_type.type;
+        }
+
         // Record Source is missing..
-        if (_source === undefined) {
+        if (source === undefined) {
             return; // nothing to import
         }
 
         // Source is Record
-        else if (_source instanceof Record) {
-            this._data = _source._data as T;
-            this._info = _source._info;
+        else if (source instanceof Record) {
+            this._data = source._data;
+            this._meta = source._meta;
         }
 
         // Source is RecordJson
-        else if (_.isPlainObject(_source) && _source.type && _source.data) {
+        else if (_.isPlainObject(source) && source.type && source.data) {
             // TODO
         }
 
         // Source is T
-        else if (_.isPlainObject(_source)) {
+        else if (_.isPlainObject(source)) {
             // TODO
         }
 
         // Unknown source data
         else {
-            throw new SystemError(500, 'Unknown record source format: %j', _source);
+            throw new SystemError(500, 'Unknown record source format: %j', source);
         }
     }
 
@@ -76,21 +63,20 @@ export class Record<T extends RecordData = RecordData> implements RecordJson {
         return this._type;
     }
 
-    get data(): T {
+    get data(): RecordData {
         return SystemError.test(this._data, 500, SystemError.UNINITIALIZED);
     }
 
-    get diff(): T {
+    get diff(): RecordDiff {
         return SystemError.test(this._diff, 500, SystemError.UNINITIALIZED);
     }
 
-    get info(): RecordInfo {
-        return SystemError.test(this._info, 500, SystemError.UNINITIALIZED);
+    get i18n(): RecordI18N {
+        return SystemError.test(this._i18n, 500, SystemError.UNINITIALIZED);
     }
 
-    /** Returns the original source data that was used to generate this record */
-    get source() {
-        return this._source;
+    get meta(): RecordMeta {
+        return SystemError.test(this._meta, 500, SystemError.UNINITIALIZED);
     }
 
     /** Returns `true` if the internal `data` property has been initialized with actual data */
@@ -103,14 +89,18 @@ export class Record<T extends RecordData = RecordData> implements RecordJson {
         return {
             type: this.type,
             data: this.data,
-            info: this.info
+            diff: this.diff,
+            i18n: this.i18n,
+            meta: this.meta
         };
     }
 
     /** Accepts `data`/`info` values and stores them internally */
-    async inject(data: T, info: RecordInfo) {
+    async inject(data: RecordData, meta: RecordMeta) {
         this._data = data;
-        this._info = info;
+        this._diff = {};
+        this._i18n = {};
+        this._meta = meta;
         return this;
     }
 

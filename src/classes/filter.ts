@@ -1,32 +1,16 @@
 import _ from 'lodash';
 
-import { Record } from '../classes/record';
+// API
+import { FilterWhereClause } from '../typedefs/filter';
+import { FilterOrderClause } from '../typedefs/filter';
+import { FilterData } from '../typedefs/filter';
+import { FilterInfo } from '../typedefs/filter';
+
+// Classes
 import { Schema } from '../classes/schema';
-import { SchemaName } from '../classes/schema';
-import { SchemaType } from '../classes/schema';
 import { System } from '../classes/system';
 
-export type FilterOp = '$eq' | '$ne' | '$gt' | '$gte' | '$lt' | '$lte' | '$like' | '$nlike';
-
-export type FilterData = {
-    where?: Array<FilterWhereClause>,
-    order?: Array<FilterOrderClause>,
-    limit?: number,
-}
-
-export type FilterWhereClause = {
-    [index: string]: FilterWhereCriteria | {
-        [key in FilterOp]?: FilterWhereCriteria
-    };
-}
-
-export type FilterWhereCriteria = string | boolean | number | null;
-
-export type FilterOrderClause = {
-    [index: string]: 'asc' | 'desc';
-}
-
-export class Filter {
+export class Filter implements FilterInfo {
     public readonly where: FilterWhereClause[] = [];
     public readonly order: FilterOrderClause[] = [];
     public limit: number = 0;
@@ -35,17 +19,14 @@ export class Filter {
 
     }
 
-    /** Proxy to `system.data.selectAll()` */
     async selectAll() {
         return this.system.data.selectAll(this);
     }
 
-    /** Proxy to `system.data.selectOne()` */
     async selectOne() {
         return this.system.data.selectOne(this);
     }
 
-    /** Proxy to `system.data.select404()` */
     async select404() {
         return this.system.data.select404(this);
     }

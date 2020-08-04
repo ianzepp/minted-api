@@ -1,104 +1,94 @@
 
-import { FlowInfo } from '../classes/flow-info';
-import { FlowRing } from '../classes/flow-ring';
+// API
+import { FlowInfo } from '../typedefs/flow';
+import { FlowRing } from '../typedefs/flow';
+import { FlowSeriesInfo } from '../typedefs/flow';
+
+// Classes
 import { Schema } from '../classes/schema';
+import { System } from '../classes/system';
 
-export abstract class Flow {
-    constructor(readonly info: FlowInfo) {}
+export abstract class Flow implements FlowInfo {
+    static readonly RING_INIT = 'init' as FlowRing;
+    static readonly RING_PREP = 'prep' as FlowRing;
+    static readonly RING_WORK = 'work' as FlowRing;
+    static readonly RING_POST = 'post' as FlowRing;
+    static readonly RING_DONE = 'done' as FlowRing;
 
-    /** Proxy to `info.system` */
-    get system() {
-        return this.info.system;
-    }
+    constructor(readonly system: System, readonly series: FlowSeriesInfo) {}
 
-    /** Proxy to `info.schema` */
     get schema() {
-        return this.info.schema;
+        return this.series.schema;
     }
 
-    /** Proxy to `info.change` */
     get change() {
-        return this.info.change;
+        return this.series.change;
     }
 
-    /** Proxy to `info.filter` */
     get filter() {
-        return this.info.filter;
+        return this.series.filter;
     }
 
-    /** Defines the code to be executed. This method **MUST** be implemented */
-    abstract async run(): Promise<unknown>;
-
-    /** Returns the schema that applies to the flow. This method **MUST** be implemented */
+    abstract run(): Promise<unknown>;
     abstract onSchema(): Schema | string;
 
-    /** Returns the ring when the flow should execute. Defaults to `FlowRing.Prep` */
-    onRing(): FlowRing {
-        return FlowRing.Prep;
+    onRing() {
+        return Flow.RING_PREP;
     }
 
-    /** Returns the priority within the ring. Used for sorting flows. Typical values are 0 (high) to 1000 (low) */
-    onRingPriority(): number {
+    onRingPriority() {
         return 100;
     }
 
-    /** Returns `true` if the flow should be executed in a `root` context. Defaults to `true` */
     onRoot() {
         return true;
     }
 
-    /** Returns `true` if the flow should be executed in a `user` context. Defaults to `true` */
     onUser() {
         return true;
     }
 
-    /** Returns `true` if this flow should run under a `select` context. Defaults to `false` */
     onSelect() {
         return false;
     }
 
-    /** Returns `true` if this flow should run under a `create` context. Defaults to `false` */
     onCreate() {
         return false;
     }
 
-    /** Returns `true` if this flow should run under a `update` context. Defaults to `false` */
     onUpdate() {
         return false;
     }
 
-    /** Returns `true` if this flow should run under a `upsert` context. Defaults to `false` */
     onUpsert() {
         return false;
     }
 
-    /** Returns `true` if this flow should run under a `select` context. Defaults to `false` */
     onDelete() {
         return false;
     }
 
-    /** Returns `true` if this flow should be executed (at all). Defaults to `true` */
     isRunnable() {
         return true;
     }
 
     isSelect() {
-        return this.info.isSelect();
+        return this.series.isSelect();
     }
 
     isCreate() {
-        return this.info.isCreate();
+        return this.series.isCreate();
     }
 
     isUpdate() {
-        return this.info.isUpdate();
+        return this.series.isUpdate();
     }
 
     isUpsert() {
-        return this.info.isUpsert();
+        return this.series.isUpsert();
     }
 
     isDelete() {
-        return this.info.isDelete();
+        return this.series.isDelete();
     }
 }

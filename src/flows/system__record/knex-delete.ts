@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
+// Classes
 import { Flow } from '../../classes/flow';
-import { FlowRing } from '../../classes/flow-ring';
 
 export default class extends Flow {
     onSchema() {
@@ -9,7 +9,7 @@ export default class extends Flow {
     }
 
     onRing() {
-        return FlowRing.Work;
+        return Flow.RING_WORK;
     }
 
     onDelete() {
@@ -18,7 +18,7 @@ export default class extends Flow {
 
     async run() {
         // Setup knex, using the current transaction
-        let knex = this.system.knex.tx(this.schema.qualified_name);
+        let knex = this.system.knex.tx(this.schema.type);
 
         // Add the records to the statement
         this.change.forEach(record => {
@@ -29,7 +29,7 @@ export default class extends Flow {
             native.deleted_by = this.system.user.user_id;
 
             // Add the change - API deletes are database updates
-            knex.where({ id: record.info.id }).update(native);
+            knex.where({ id: record.meta.id }).update(native);
         });
 
         // Run the changes

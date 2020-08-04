@@ -6,9 +6,10 @@ import { SystemError } from '../classes/system-error';
 
 // Let the library juggle connections internally
 export const KnexDriverOptions: Knex.Config = {
-    client: 'sqlite3',
+    client: 'pg',
     connection: {
-        filename: 'dst/sqlite3.db'
+        host: 'localhost',
+        port: 5432
     },
     useNullAsDefault: true
 };
@@ -19,16 +20,6 @@ export class KnexSystem {
     private _transaction: Knex.Transaction | undefined;
 
     constructor(private readonly system: System) {}
-
-    /** Returns true if we are using a Postgres connection */
-    isPostgresql() {
-        return KnexDriverOptions.client === 'pg';
-    }
-
-    /** Returns true if we are using a Sqlite3 connection */
-    isSqlite3() {
-        return KnexDriverOptions.client === 'sqlite3';
-    }
 
     /** Returns the internal knex driver. This direct-access approach should be used sparingly. */
     get driver() {

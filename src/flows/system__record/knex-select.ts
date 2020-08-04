@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
+// Classes
 import { Flow } from '../../classes/flow';
-import { FlowRing } from '../../classes/flow-ring';
 
 export default class extends Flow {
     onSchema() {
@@ -9,7 +9,7 @@ export default class extends Flow {
     }
 
     onRing() {
-        return FlowRing.Work;
+        return Flow.RING_WORK;
     }
 
     onSelect() {
@@ -17,7 +17,7 @@ export default class extends Flow {
     }
 
     async run() {
-        let knex = this.system.knex.tx(this.schema.qualified_name);
+        let knex = this.system.knex.tx(this.schema.type);
 
         // Find all results, per the filter criteria
         let rows = await knex;
