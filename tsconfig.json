@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "allowJs": false,
+        "baseUrl": "./",
+        "esModuleInterop": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "outDir": "dst",
+        "preserveConstEnums": true,
+        "removeComments": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "target": "es5"
+    },
+    "include": [
+        "mocha/**/*.ts",
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "src/**/*.spec.ts",
+        "tests/**/*.spec.ts",
+        "node_modules"
+    ]
+}
