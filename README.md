@@ -27,14 +27,44 @@ export PGPASSWORD=...
 export PGDATABASE=...
 ```
 
-The system service code in `src/classes/knex-system` will pick it up.
+The knex subsystem code in `src/classes/knex-system` will pick it up.
 
-# Default configuration
+# Interfaces / Typedefs
 
-...
+Typedefs for all API types can be found in the various `src/typedefs/*.ts` files. All typedefs have interface-level comments to describe how the different interfaces can be used, and what type of data is returned. These comments should also show up in your IDE during "mouseover" or "hover", as long as your IDE can understand the typescript definitions/interfaces.
+
+There are also method-level and line-level comments in the implementation classes (found in `src/classes/*.ts`), but these are more focused on how the code works internally, instead of describing the inputs and responses.
+
 
 # Searching/Filtering
 
+Search for records is done using a JSON-based "filter". The filter syntax is complex and highly flexible, but a basic filter often looks something like this:
+
+```json
+{
+    "where": {
+        "name": "june%",
+        "created_at": {
+            "$gt": "yesterday"
+        }
+    },
+    "limit": 10,
+    "order": {
+        "name": "asc"
+    }
+}
+```
+
+To run this filter, simply `POST` to the API endpoint `/api/data/system__user/search`, and send the JSON data in the request body.
+
+The API will then search through the database:
+- Search the `system__user` table
+- For rows where the `name` property starts with `june`
+- For rows that were created more recently than "yesterday"
+- Sorting the results by the `name` property in ascending order
+- Limiting the results to 10 rows maximum
+
+That list of (up to) 10 results is then converted into a JSON format (as defined by the `RecordJson` interface in `src/typedefs/record.ts`), and returned in an array. The
 ...
 
 # Using the REST endpoints
