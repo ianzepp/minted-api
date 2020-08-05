@@ -14,10 +14,14 @@ export interface RecordMeta {
     updated_by: string;
     trashed_at: string | null;
     trashed_by: string | null;
-    access_full: string | null;
-    access_edit: string | null;
-    access_read: string | null;
-    access_deny: string | null;
+}
+
+export interface RecordAcls {
+    owns: string[] | null;
+    full: string[] | null;
+    edit: string[] | null;
+    read: string[] | null;
+    deny: string[] | null;
 }
 
 export interface RecordJson {
@@ -32,11 +36,14 @@ export interface RecordConcreteJson extends RecordJson {
     /** Returns the subset of changed data for this record for this operation */
     diff: RecordDiff;
 
+    /** Returns any translated text values for this record */
+    i18n: RecordI18N;
+
     /** Returns the set of timestamp and access information describing this record */
     meta: RecordMeta;
 
-    /** Returns any translated text values for this record */
-    i18n: RecordI18N;
+    /** Returns the set of access control list data */
+    acls: RecordAcls;
 }
 
 export interface RecordInfo extends RecordConcreteJson {

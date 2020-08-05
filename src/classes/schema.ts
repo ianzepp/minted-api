@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 // API
 import { ChangeData } from '../typedefs/record';
-import { FilterData } from '../typedefs/filter';
+import { FilterJson } from '../typedefs/filter';
 import { FilterInfo } from '../typedefs/filter';
 import { RecordInfo } from '../typedefs/record';
 import { SchemaInfo } from '../typedefs/schema';
@@ -21,7 +21,7 @@ export class Schema extends Record implements SchemaInfo {
         });
     }
 
-    toFilter(source?: FilterData): FilterInfo {
+    toFilter(source?: FilterJson): FilterInfo {
         return new Filter(this.system, this, source);
     }
 
@@ -29,16 +29,20 @@ export class Schema extends Record implements SchemaInfo {
         return new Record(this.system, this, source);
     }
 
-    async selectAll(filter: Filter) {
-        return this.system.data.selectAll(filter);
+    toChange(source?: ChangeData[]): RecordInfo[] {
+        return (source ?? []).map(source => this.toRecord(source));
     }
 
-    async selectOne(filter: Filter) {
-        return this.system.data.selectOne(filter);
+    async selectAll(filter: FilterJson) {
+        return this.system.data.selectAll(this._claim(filter));
     }
 
-    async select404(filter: Filter) {
-        return this.system.data.select404(filter);
+    async selectOne(filter: FilterJson) {
+        return this.system.data.selectOne(this._claim(filter));
+    }
+
+    async select404(filter: FilterJson) {
+        return this.system.data.select404(this._claim(filter));
     }
 
     async createAll(change: ChangeData[]) {
@@ -71,5 +75,13 @@ export class Schema extends Record implements SchemaInfo {
 
     async deleteOne(change: ChangeData) {
         return this.system.data.deleteOne(change);
+    }
+
+    //
+    // Private helpers
+    //
+
+    private _claim(filter: FilterJson) {
+        return _.set(filter, 'table', this.type);
     }
 }

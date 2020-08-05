@@ -1,5 +1,5 @@
 
-import { FilterData } from '../typedefs/filter';
+import { FilterJson } from '../typedefs/filter';
 import { FilterInfo } from '../typedefs/filter';
 import { RecordInfo } from '../typedefs/record';
 import { ChangeData } from '../typedefs/record';
@@ -9,19 +9,22 @@ export type SchemaType = SchemaInfo | SchemaName;
 
 export interface SchemaInfo extends RecordInfo {
     /** Generate a new filter */
-    toFilter(source?: FilterData): FilterInfo;
+    toFilter(source?: FilterJson): FilterInfo;
 
     /** Generate a new record */
     toRecord(source?: ChangeData): RecordInfo;
 
+    /** Generate a new collection of records */
+    toChange(source?: ChangeData[]): RecordInfo[];
+
     /** Proxy to `system.data.selectAll()` */
-    selectAll(filter: FilterInfo): Promise<RecordInfo[]>;
+    selectAll(filter: FilterJson): Promise<RecordInfo[]>;
 
     /** Proxy to `system.data.selectOne()` */
-    selectOne(filter: FilterInfo): Promise<RecordInfo | undefined>;
+    selectOne(filter: FilterJson): Promise<RecordInfo | undefined>;
 
     /** Proxy to `system.data.select404()` */
-    select404(filter: FilterInfo): Promise<RecordInfo>;
+    select404(filter: FilterJson): Promise<RecordInfo>;
 
     /** Proxy to `system.data.createAll()` */
     createAll(change: ChangeData[]): Promise<RecordInfo[]>;

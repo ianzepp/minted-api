@@ -5,7 +5,7 @@ import { Flow } from '../../classes/flow';
 
 export default class extends Flow {
     onSchema() {
-        return '*';
+        return 'system__record';
     }
 
     onRing() {

@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import 'mocha';
 
-// API
-import { System } from '../src/classes/system';
+// Classes
+import { AutoInstall } from '../src/classes/autoinstall';
 
 // Script
 describe('Autoinstall', () => {
@@ -10,7 +10,11 @@ describe('Autoinstall', () => {
         expect(true).true;
     });
 
-    it('Install schemas and columns', async () => {
-        let system = new System();
+    it('Bootstrap database', async () => {
+        return new AutoInstall().bootstrap();
+    });
+
+    it('Install core schemas', async () => {
+        return new AutoInstall().run();
     });
 });

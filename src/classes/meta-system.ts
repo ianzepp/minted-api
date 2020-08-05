@@ -14,11 +14,30 @@ import { Schema } from '../classes/schema';
 import { System } from '../classes/system';
 import { SystemError } from '../classes/system-error';
 
+const SCHEMAS_PROXY_HANDLER = {
+    get: (t: MetaSystem, p: string | number | symbol) => {
+        if (typeof p === 'string') {
+            return t.toSchema(p);
+        }
+    }
+};
+
+export class MetaSchemaProxy {
+    [index: string]: SchemaInfo;
+
+    constructor(meta: MetaSystem) {
+        return new Proxy(meta, SCHEMAS_PROXY_HANDLER) as unknown as _.Dictionary<SchemaInfo>;
+    }
+}
+
 export class MetaSystem {
     constructor(private readonly system: System) {}
 
     // Cache known schema names
     private readonly _schema_dict: _.Dictionary<SchemaInfo> = {};
+
+    // Proxies
+    readonly schemas = new MetaSchemaProxy(this);
 
     /** Initialize a schema, using a local cache if possible */
     toSchema(schema_type: SchemaType): SchemaInfo {
@@ -57,5 +76,9 @@ export class MetaSystem {
         }
 
         return schema;
+    }
+
+    toSchemaSafe(p: string | number | symbol) {
+        return typeof p === 'string' ? this.toSchema(p) : undefined;
     }
 }

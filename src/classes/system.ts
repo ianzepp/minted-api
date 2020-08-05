@@ -2,13 +2,11 @@ import _ from 'lodash';
 // import { format } from 'util';
 import { v4 as uuid } from 'uuid';
 
-// API
-import { RecordMeta } from '../typedefs/record';
-
 // Subsystems
 import { BulkSystem } from '../classes/bulk-system';
 import { DataSystem } from '../classes/data-system';
 import { KnexSystem } from '../classes/knex-system';
+import { LogsSystem } from '../classes/logs-system';
 import { MetaSystem } from '../classes/meta-system';
 import { UserSystem } from '../classes/user-system';
 
@@ -16,6 +14,7 @@ export class System {
     // Services
     public readonly bulk = new BulkSystem(this);
     public readonly data = new DataSystem(this);
+    public readonly logs = new LogsSystem(this);
     public readonly knex = new KnexSystem(this);
     public readonly meta = new MetaSystem(this);
     public readonly user = new UserSystem(this);

@@ -6,6 +6,7 @@ import { RecordDiff } from '../typedefs/record';
 import { RecordI18N } from '../typedefs/record';
 import { RecordInfo } from '../typedefs/record';
 import { RecordJson } from '../typedefs/record';
+import { RecordAcls } from '../typedefs/record';
 import { RecordMeta } from '../typedefs/record';
 import { SchemaName } from '../typedefs/schema';
 import { SchemaType } from '../typedefs/schema';
@@ -20,6 +21,7 @@ export class Record implements RecordInfo {
     private _diff: RecordDiff | undefined = {} as RecordDiff;
     private _i18n: RecordI18N | undefined = {} as RecordI18N;
     private _meta: RecordMeta | undefined;
+    private _acls: RecordAcls | undefined;
 
     // Related objects
     constructor(readonly system: System, schema_type: SchemaType, source?: RecordJson | RecordData) {
@@ -79,6 +81,10 @@ export class Record implements RecordInfo {
         return SystemError.test(this._meta, 500, SystemError.UNINITIALIZED);
     }
 
+    get acls(): RecordAcls {
+        return SystemError.test(this._acls, 500, SystemError.UNINITIALIZED);
+    }
+
     /** Returns `true` if the internal `data` property has been initialized with actual data */
     isLoaded() {
         return this._data === undefined;
@@ -91,7 +97,8 @@ export class Record implements RecordInfo {
             data: this.data,
             diff: this.diff,
             i18n: this.i18n,
-            meta: this.meta
+            meta: this.meta,
+            acls: this.acls,
         };
     }
 

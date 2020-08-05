@@ -1,8 +1,5 @@
 import _ from 'lodash';
 
-// API
-import { FlowRing } from '../../typedefs/flow';
-
 // Classes
 import { Flow } from '../../classes/flow';
 
@@ -28,37 +25,16 @@ export default class extends Flow {
     }
 
     async run() {
-        // Setup knex, using the current transaction
-        let knex = this.system.knex.driver;
-
-        // Convert the schema record into actual knex "createTable" calls
         for(let record of this.change) {
             // Create a schema placeholder
             let schema = this.system.meta.toSchema(record.data.name);
 
             // Add the table data
-            await knex.schema.createTable(schema.type, table => {
-                table.uuid('id').primary();
-
-                // Timestamps
-                table.dateTime('created_at').notNullable();
-                table.uuid('created_by').notNullable();
-                table.dateTime('updated_at').notNullable();
-                table.uuid('updated_by').notNullable();
-                table.dateTime('trashed_at').defaultTo(null);
-                table.uuid('trashed_by').defaultTo(null);
-                table.dateTime('deleted_at').defaultTo(null);
-                table.uuid('deleted_by').defaultTo(null);
-
-                // Access
-                table.jsonb('access_owns').defaultTo(null); // created the record
-                table.jsonb('access_full').defaultTo(null); // can change acls
-                table.jsonb('access_edit').defaultTo(null); // can change data
-                table.jsonb('access_read').defaultTo(null); // can select data
-                table.jsonb('access_deny').defaultTo(null); // cannot see the record
+            await this.system.knex.createTable(schema.type, table => {
+                table.text('description');
+                table.boolean('metadata');
+                table.boolean('frozen');
             });
-
-            // On to the next record
         }
     }
 }

@@ -14,7 +14,8 @@
         "target": "es5"
     },
     "include": [
-        "src/**/*"
+        "mocha/**/*.ts",
+        "src/**/*.ts"
     ],
     "exclude": [
         "src/**/*.spec.ts",

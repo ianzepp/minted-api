@@ -1,19 +1,17 @@
 
 import { RecordInfo } from '../typedefs/record';
-import { SchemaInfo } from '../typedefs/schema';
+import { SchemaName } from '../typedefs/schema';
 
 export type FilterOp = '$eq' | '$ne' | '$gt' | '$gte' | '$lt' | '$lte' | '$like' | '$nlike';
-
-export type FilterData = {
-    where?: Array<FilterWhereClause>,
-    order?: Array<FilterOrderClause>,
-    limit?: number,
-}
+export type FilterGroupingOp = '$and' | '$or' | '$not' | '$nor';
+export type FilterType = FilterJson | FilterInfo;
 
 export type FilterWhereClause = {
     [index: string]: FilterWhereCriteria | {
         [key in FilterOp]?: FilterWhereCriteria
-    };
+    }
+} | {
+    [key in FilterGroupingOp]?: FilterWhereClause[]
 }
 
 export type FilterWhereCriteria = string | boolean | number | null;
@@ -23,20 +21,22 @@ export type FilterOrderClause = {
 }
 
 export interface FilterJson {
+    table?: SchemaName;
     where?: FilterWhereClause[];
     order?: FilterOrderClause[];
     limit?: number;
 }
 
 export interface FilterConcreteJson extends FilterJson {
+    table: SchemaName;
     where: FilterWhereClause[];
     order: FilterOrderClause[];
     limit: number;
 }
 
-export interface FilterInfo extends FilterJson {
-    /** Returns the parent schema for this filter */
-    readonly schema: SchemaInfo;
+export interface FilterInfo extends FilterConcreteJson {
+    /** Returns the parent schema table name for this filter */
+    readonly table: SchemaName;
 
     /** Proxy to `system.data.selectAll()` */
     selectAll(): Promise<RecordInfo[]>;

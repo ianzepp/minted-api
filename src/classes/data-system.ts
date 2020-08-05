@@ -1,9 +1,11 @@
 import _ from 'lodash';
+import Chai from 'chai';
 
 // API
 import { ChangeData } from '../typedefs/record';
+import { FilterJson } from '../typedefs/filter';
 import { FilterInfo } from '../typedefs/filter';
-import { SchemaInfo } from '../typedefs/schema';
+import { SchemaName } from '../typedefs/schema';
 import { RecordInfo } from '../typedefs/record';
 
 // Classes
@@ -34,7 +36,7 @@ export class DataSystem {
     // Collection methods
     //
 
-    async selectAll(filter: FilterInfo) {
+    async selectAll(filter: FilterJson) {
         return this._run_select(filter);
     }
 
@@ -58,11 +60,11 @@ export class DataSystem {
     // Individual methods
     //
 
-    async selectOne(filter: FilterInfo): Promise<RecordInfo | undefined> {
+    async selectOne(filter: FilterJson): Promise<RecordInfo | undefined> {
         return this._run_select(filter).then(__head_one);
     }
 
-    async select404(filter: FilterInfo): Promise<RecordInfo> {
+    async select404(filter: FilterJson): Promise<RecordInfo> {
         return this._run_select(filter).then(__head_404);
     }
 
@@ -86,11 +88,11 @@ export class DataSystem {
     // Filter + Change ops
     //
 
-    async updateAny(_filter: FilterInfo, _change: ChangeData) {
+    async updateAny(_filter: FilterJson, _change: ChangeData) {
         throw new SystemError(500, SystemError.UNIMPLEMENTED);
     }
 
-    async deleteAny(_filter: FilterInfo) {
+    async deleteAny(_filter: FilterJson) {
         throw new SystemError(500, SystemError.UNIMPLEMENTED);
     }
 
@@ -98,30 +100,34 @@ export class DataSystem {
     // Internal functions
     //
 
-    private async _run_select(filter: FilterInfo) {
-        return this._run(filter.schema, undefined, filter, DataSystem.OP_SELECT);
+    private async _run_select(filter: FilterJson) {
+        Chai.expect(filter, '_run_select(filter)').not.empty;
+        Chai.expect(filter, '_run_select(filter)').property('table').not.undefined;
+
+        return this._run(filter.table, undefined, filter, DataSystem.OP_SELECT);
     }
 
     private async _run_change(change: ChangeData[], op: string) {
+        // Group things
         let records = change.map(source => this._to_record(source));
         let schemas = _.groupBy(records, record => record.type);
 
         // Process schema collections in the order they appear
         for(let schema_name in schemas) {
-            let schema = this.system.meta.toSchema(schema_name)
+            let change = schemas[schema_name];
 
-            // Run this groups of changes
-            await this._run(schema, schemas[schema_name], undefined, op);
+            // Run groups
+            await this._run(schema_name, change, undefined, op);
         }
 
         // Done
         return records;
     }
 
-    private async _run(schema: SchemaInfo, change: RecordInfo[] | undefined, filter: FilterInfo | undefined, op: string) {
-        // Sanity
-        change = change ?? [];
-        filter = filter ?? schema.toFilter();
+    private async _run(schema_name: SchemaName, change_data: RecordInfo[] | undefined, filter_data: FilterJson | undefined, op: string) {
+        let schema = this.system.meta.toSchema(schema_name);
+        let filter = schema.toFilter(filter_data);
+        let change = schema.toChange(change_data);
 
         // Build a flow operation
         let series = new FlowSeries(this.system, schema, change, filter, op);
@@ -154,7 +160,7 @@ export class DataSystem {
         }
 
         else {
-            throw new SystemError(500, 'Unsupport record data format %j', change);
+            throw new SystemError(500, 'Unsupported record data format %j', change);
         }
     }
 }

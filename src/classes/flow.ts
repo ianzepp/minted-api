@@ -3,12 +3,13 @@
 import { FlowInfo } from '../typedefs/flow';
 import { FlowRing } from '../typedefs/flow';
 import { FlowSeriesInfo } from '../typedefs/flow';
+import { SchemaName } from '../typedefs/schema';
 
 // Classes
-import { Schema } from '../classes/schema';
 import { System } from '../classes/system';
+import { SystemError } from '../classes/system-error';
 
-export abstract class Flow implements FlowInfo {
+export class Flow implements FlowInfo {
     static readonly RING_INIT = 'init' as FlowRing;
     static readonly RING_PREP = 'prep' as FlowRing;
     static readonly RING_WORK = 'work' as FlowRing;
@@ -29,8 +30,28 @@ export abstract class Flow implements FlowInfo {
         return this.series.filter;
     }
 
-    abstract run(): Promise<unknown>;
-    abstract onSchema(): Schema | string;
+    async run(): Promise<unknown> {
+        throw new SystemError(500, SystemError.UNIMPLEMENTED);
+    }
+
+    toJSON() {
+        return {
+            'on-schema': this.onSchema(),
+            'on-ring': this.onRing(),
+            'on-ring-priority': this.onRingPriority(),
+            'on-root': this.onRoot(),
+            'on-user': this.onUser(),
+            'on-select': this.onSelect(),
+            'on-create': this.onCreate(),
+            'on-update': this.onUpdate(),
+            'on-upsert': this.onUpsert(),
+            'on-delete': this.onDelete(),
+        };
+    }
+
+    onSchema(): SchemaName {
+        throw new SystemError(500, SystemError.UNIMPLEMENTED);
+    }
 
     onRing() {
         return Flow.RING_PREP;
