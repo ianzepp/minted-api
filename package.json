@@ -8,7 +8,8 @@
     "compile-clean": "bash ./run/compile-clean.sh",
     "compile": "bash ./run/compile.sh",
     "start": "bash ./run/start.sh",
-    "test": "bash ./run/test.sh"
+    "test": "bash ./run/test.sh",
+    "test-loud": "bash ./run/test-loud.sh"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   "homepage": "https://github.com/ianzepp/minted-api#readme",
   "dependencies": {
     "@types/chai": "^4.2.12",
+    "@types/debug": "^4.1.5",
     "@types/knex": "^0.16.1",
     "@types/lodash": "^4.14.157",
     "@types/mocha": "^8.0.1",
@@ -29,6 +31,7 @@
     "@types/uuid": "^8.0.0",
     "axios": "^0.19.2",
     "chai": "^4.2.0",
+    "debug": "^4.1.1",
     "knex": "^0.21.2",
     "lodash": "^4.17.19",
     "mocha": "^8.1.0",
