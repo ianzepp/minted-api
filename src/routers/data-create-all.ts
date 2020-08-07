@@ -16,10 +16,11 @@ export default class extends Router {
 
     async validate() {
         Chai.expect(this.params).property('schema').a('string').not.empty;
-        Chai.expect(this.change).a('array').not.empty;
+        Chai.expect(this.change).a('array');
     }
 
     async run() {
+        // Typedefs assumptions are ok.. see `validate()` above.
         let change = this.change as _.Dictionary<any>[];
         let schema = this.system.meta.toSchema(this.params.schema);
 

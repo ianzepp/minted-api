@@ -21,14 +21,14 @@ export type FilterOrderClause = {
 }
 
 export interface FilterJson {
-    table?: SchemaName;
-    where?: FilterWhereClause[];
-    order?: FilterOrderClause[];
-    limit?: number;
+    using?: SchemaName;
+    where?: FilterWhereClause | FilterWhereClause[];
+    order?: FilterOrderClause | FilterOrderClause[];
+    limit?: number | 'max';
 }
 
 export interface FilterConcreteJson extends FilterJson {
-    table: SchemaName;
+    using: SchemaName;
     where: FilterWhereClause[];
     order: FilterOrderClause[];
     limit: number;
@@ -36,7 +36,7 @@ export interface FilterConcreteJson extends FilterJson {
 
 export interface FilterInfo extends FilterConcreteJson {
     /** Returns the parent schema table name for this filter */
-    readonly table: SchemaName;
+    readonly using: SchemaName;
 
     /** Proxy to `system.data.selectAll()` */
     selectAll(): Promise<RecordInfo[]>;

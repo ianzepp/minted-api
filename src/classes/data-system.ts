@@ -101,10 +101,10 @@ export class DataSystem {
     //
 
     private async _run_select(filter: FilterJson) {
-        Chai.expect(filter, '_run_select(filter)').not.empty;
-        Chai.expect(filter, '_run_select(filter)').property('table').not.undefined;
+        Chai.expect(filter, '_run_select(filter)').a('object');
+        Chai.expect(filter, '_run_select(filter)').property('using').not.undefined;
 
-        return this._run(filter.table, undefined, filter, DataSystem.OP_SELECT);
+        return this._run(filter.using, undefined, filter, DataSystem.OP_SELECT);
     }
 
     private async _run_change(change: ChangeData[], op: string) {

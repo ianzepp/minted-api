@@ -28,14 +28,15 @@ export class KnexSystem {
         return KnexDriver;
     }
 
-    /** Gets a new knex builder, using the internal transaction reference */
+    /** Gets a new knex builder, using the internal transaction reference (if any) */
     tx(using: string) {
-        if (this._transaction === undefined) {
-            throw new SystemError(500, 'Missing Knex transaction reference!');
+        if (this._transaction) {
+            return KnexDriver(using).transacting(this._transaction);
         }
 
-        // Attach the transaction reference
-        return KnexDriver(using).transacting(this._transaction);
+        else {
+            return KnexDriver(using);
+        }
     }
 
     /** Executes a transaction, storing the TX reference for future use */

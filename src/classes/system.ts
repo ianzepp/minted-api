@@ -11,6 +11,9 @@ import { MetaSystem } from '../classes/meta-system';
 import { UserSystem } from '../classes/user-system';
 
 export class System {
+    static UUIDZERO = '00000000-0000-0000-0000-000000000000';
+    static NOW = new Date();
+
     // Services
     public readonly bulk = new BulkSystem(this);
     public readonly data = new DataSystem(this);

@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 // Classes
 import { Flow } from '../../classes/flow';
+import { System } from '../../classes/system';
 
 export default class extends Flow {
     onSchema() {
@@ -22,22 +23,29 @@ export default class extends Flow {
 
         // Add the records to the statement
         this.change.forEach(record => {
-            let native: _.Dictionary<any> = {};
+            let native = record.toFlat();
 
-            // Copy data
-            _.assign(native, record.diff);
-
-            // Copy info properties
+            // Data
             native.id = this.system.uuid();
-            native.created_at = this.system.datetime();
-            native.created_by = this.system.user.user_id;
-            native.updated_at = this.system.datetime();
-            native.updated_by = this.system.user.user_id;
+            native.ns = this.system.user.ns;
+            native.sc = this.system.user.sc || null;
 
-            // TODO - access
+            // Meta
+            native.meta__created_at = System.NOW;
+            native.meta__created_by = this.system.user.id;
+            native.meta__updated_at = System.NOW;
+            native.meta__updated_by = this.system.user.id;
+            native.meta__trashed_at = null;
+            native.meta__trashed_by = null;
+
+            // Acls
+            native.acls__full = native.acls__full ?? [];
+            native.acls__edit = native.acls__edit ?? [];
+            native.acls__read = native.acls__read ?? [];
+            native.acls__deny = native.acls__deny ?? [];
 
             // Add the change
-            knex.where({ id: record.meta.id }).update(native);
+            knex.insert(native);
         });
 
         // Run the change

@@ -36,7 +36,7 @@ export class KnexFilter {
     }
 
     private _share(knex: Knex.QueryBuilder) {
-        let access_list: string[] = [];
+        let access_list = this.system.user.access_list;
 
         // This is hacky but it works WAY better on PG than inverting the comparison
         // and listing out the individual OR clauses for each ACL column.

@@ -65,15 +65,8 @@ export class FlowSeries implements FlowSeriesInfo {
     }
 
     async run(ring: FlowRing) {
-        // Logs
-        this.system.logs.info('flow-series[%s]: ring=%j schema=%j change:count=%j, filter=%j', this.op, ring, this.schema.type, this.change.length, this.filter);
-        this.system.logs.info('.. there are %d master flows', this.flows.length);
-
         // Filter down the master flow list to only be the ones for this ring
         let flows = this.flows.filter(flow => flow.onRing() === ring);
-
-        // Logs
-        this.system.logs.info('.. there are %d filtered flows for this ring only', flows.length);
 
         // Walk and run
         for(let flow of flows) {
@@ -91,9 +84,6 @@ export class FlowSeries implements FlowSeriesInfo {
         return _.compact(FLOWS.map(FlowType => {
             // Create the flow
             let flow = new FlowType(this.system, this);
-
-            // Logs
-            this.system.logs.info('.. testing flow: %j', flow);
 
             // Filter flows by schema type
             if (this.onSchema() !== flow.onSchema() && flow.onSchema() !== 'system__record') {

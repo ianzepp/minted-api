@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
 import { Flow } from '../../classes/flow';
+import { System } from '../../classes/system';
 
 export default class extends Flow {
     onSchema() {
@@ -21,17 +22,14 @@ export default class extends Flow {
 
         // Add the records to the statement
         this.change.forEach(record => {
-            let native: _.Dictionary<any> = {};
-
-            // Copy changed data
-            _.assign(native, record.diff);
+            let native = record.toFlat();
 
             // Copy info properties
-            native.updated_at = this.system.datetime();
-            native.updated_by = this.system.user.user_id;
+            native.meta__updated_at = System.NOW;
+            native.meta__updated_by = this.system.user.id;
 
             // Add the change
-            knex.where({ id: record.meta.id }).update(native);
+            knex.where({ id: native.id }).update(native);
         });
 
         // Run the changes

@@ -29,6 +29,6 @@ export default class extends Flow {
 
         // Convert to records
         this.change.length = 0;
-        this.change.push(... rows.map((native: ChangeData) => this.schema.toRecord(native)));
+        this.change.push(... rows.map((flat: ChangeData) => this.schema.toRecord(flat)));
     }
 }

@@ -1,11 +1,13 @@
+import util from 'util';
+
 export class SystemError extends Error {
     static UNIMPLEMENTED = 'unimplemented: This method is currently unimplemented';
     static UNINITIALIZED = 'uninitialized: This object has not been properly initialized';
     static UNSUPPORTED = 'unsupported: This method is currently unimplemented: %j';
+    static UNSUPPORTED_DATA_TYPE = 'unsupported-data-type';
 
     constructor(readonly code: number = 500, message: string = 'System error', ... params: any) {
-        // super(format(message, params));
-        super(message);
+        super(util.format(message, ... params));
     }
 
     static testInitialized(test: any) {

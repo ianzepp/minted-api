@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 // Classes
 import { Flow } from '../../classes/flow';
+import { System } from '../../classes/system';
 
 export default class extends Flow {
     onSchema() {
@@ -22,14 +23,10 @@ export default class extends Flow {
 
         // Add the records to the statement
         this.change.forEach(record => {
-            let native: _.Dictionary<any> = {};
-
-            // Copy info properties
-            native.deleted_at = this.system.datetime();
-            native.deleted_by = this.system.user.user_id;
-
-            // Add the change - API deletes are database updates
-            knex.where({ id: record.meta.id }).update(native);
+            knex.where({ id: record.data.id }).update({
+                meta__trashed_at: System.NOW,
+                meta__trashed_by: this.system.user.id
+            });
         });
 
         // Run the changes

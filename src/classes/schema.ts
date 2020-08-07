@@ -16,8 +16,7 @@ import { System } from '../classes/system';
 export class Schema extends Record implements SchemaInfo {
     constructor(system: System, schema_name: SchemaName) {
         super(system, 'system__schema', {
-            name: schema_name,
-            description: null
+            name: schema_name
         });
     }
 
@@ -34,15 +33,15 @@ export class Schema extends Record implements SchemaInfo {
     }
 
     async selectAll(filter: FilterJson) {
-        return this.system.data.selectAll(this._claim(filter));
+        return this.system.data.selectAll(this._using(filter));
     }
 
     async selectOne(filter: FilterJson) {
-        return this.system.data.selectOne(this._claim(filter));
+        return this.system.data.selectOne(this._using(filter));
     }
 
     async select404(filter: FilterJson) {
-        return this.system.data.select404(this._claim(filter));
+        return this.system.data.select404(this._using(filter));
     }
 
     async createAll(change: ChangeData[]) {
@@ -81,7 +80,7 @@ export class Schema extends Record implements SchemaInfo {
     // Private helpers
     //
 
-    private _claim(filter: FilterJson) {
-        return _.set(filter, 'table', this.type);
+    private _using(filter: FilterJson) {
+        return _.set(filter, 'using', this.type);
     }
 }
