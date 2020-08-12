@@ -19,7 +19,7 @@ export default class extends Flow {
 
     async run() {
         // Setup knex, using the current transaction
-        let knex = this.system.knex.tx(this.schema.type);
+        let knex = this.system.knex.tx(this.schema.name);
 
         // Add the records to the statement
         this.change.forEach(record => {

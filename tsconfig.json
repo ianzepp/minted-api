@@ -11,7 +11,7 @@
         "removeComments": true,
         "skipLibCheck": true,
         "sourceMap": true,
-        "target": "es5"
+        "target": "es6"
     },
     "include": [
         "mocha/**/*.ts",

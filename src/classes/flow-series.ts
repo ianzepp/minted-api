@@ -57,7 +57,7 @@ export class FlowSeries implements FlowSeriesInfo {
     }
 
     onSchema() {
-        return this.schema.type;
+        return this.schema.name;
     }
 
     async initialize() {

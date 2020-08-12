@@ -13,19 +13,15 @@ import { Record } from '../classes/record';
 import { Filter } from '../classes/filter';
 import { System } from '../classes/system';
 
-export class Schema extends Record implements SchemaInfo {
-    constructor(system: System, schema_name: SchemaName) {
-        super(system, 'system__schema', {
-            name: schema_name
-        });
-    }
+export class Schema implements SchemaInfo {
+    constructor(private readonly system: System, readonly name: SchemaName) {}
 
     toFilter(source?: FilterJson): FilterInfo {
-        return new Filter(this.system, this, source);
+        return new Filter(this.system, this.name, source);
     }
 
     toRecord(source?: ChangeData): RecordInfo {
-        return new Record(this.system, this, source);
+        return new Record(this.system, this.name, source);
     }
 
     toChange(source?: ChangeData[]): RecordInfo[] {
@@ -33,54 +29,46 @@ export class Schema extends Record implements SchemaInfo {
     }
 
     async selectAll(filter: FilterJson) {
-        return this.system.data.selectAll(this._using(filter));
+        return this.system.data.selectAll(this.name, filter);
     }
 
     async selectOne(filter: FilterJson) {
-        return this.system.data.selectOne(this._using(filter));
+        return this.system.data.selectOne(this.name, filter);
     }
 
     async select404(filter: FilterJson) {
-        return this.system.data.select404(this._using(filter));
+        return this.system.data.select404(this.name, filter);
     }
 
     async createAll(change: ChangeData[]) {
-        return this.system.data.createAll(change);
+        return this.system.data.createAll(this.name, change);
     }
 
     async createOne(change: ChangeData) {
-        return this.system.data.createOne(change);
+        return this.system.data.createOne(this.name, change);
     }
 
     async updateAll(change: ChangeData[]) {
-        return this.system.data.updateAll(change);
+        return this.system.data.updateAll(this.name, change);
     }
 
     async updateOne(change: ChangeData) {
-        return this.system.data.updateOne(change);
+        return this.system.data.updateOne(this.name, change);
     }
 
     async upsertAll(change: ChangeData[]) {
-        return this.system.data.upsertAll(change);
+        return this.system.data.upsertAll(this.name, change);
     }
 
     async upsertOne(change: ChangeData) {
-        return this.system.data.upsertOne(change);
+        return this.system.data.upsertOne(this.name, change);
     }
 
     async deleteAll(change: ChangeData[]) {
-        return this.system.data.deleteAll(change);
+        return this.system.data.deleteAll(this.name, change);
     }
 
     async deleteOne(change: ChangeData) {
-        return this.system.data.deleteOne(change);
-    }
-
-    //
-    // Private helpers
-    //
-
-    private _using(filter: FilterJson) {
-        return _.set(filter, 'using', this.type);
+        return this.system.data.deleteOne(this.name, change);
     }
 }

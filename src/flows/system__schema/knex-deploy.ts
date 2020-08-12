@@ -30,7 +30,7 @@ export default class extends Flow {
             let schema = this.system.meta.toSchema(record.data.name);
 
             // Add the table data
-            await this.system.knex.createTable(schema.type, table => {
+            await this.system.knex.createTable(schema.name, table => {
                 table.text('description');
                 table.boolean('metadata');
                 table.boolean('frozen');

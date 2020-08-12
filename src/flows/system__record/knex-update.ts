@@ -18,18 +18,15 @@ export default class extends Flow {
 
     async run() {
         // Setup knex, using the current transaction
-        let knex = this.system.knex.tx(this.schema.type);
+        let knex = this.system.knex.tx(this.schema.name);
 
-        // Add the records to the statement
+        // Loop and process records
         this.change.forEach(record => {
-            let native = record.toFlat();
-
-            // Copy info properties
-            native.meta__updated_at = System.NOW;
-            native.meta__updated_by = this.system.user.id;
+            record.meta.updated_at = System.NOW;
+            record.meta.updated_by = this.system.user.id;
 
             // Add the change
-            knex.where({ id: native.id }).update(native);
+            knex.where({ id: record.data.id }).update(record.toFlatDiff());
         });
 
         // Run the changes

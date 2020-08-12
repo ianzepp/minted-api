@@ -55,7 +55,7 @@ export interface FlowInfo {
     run(): Promise<unknown>;
 
     /** Returns the schema that applies to the flow. This method **MUST** be implemented */
-    onSchema(): SchemaInfo | SchemaName;
+    onSchema(): SchemaName;
 
     /** Returns the ring when the flow should execute. Defaults to `FlowRing.Prep` */
     onRing(): FlowRing;
