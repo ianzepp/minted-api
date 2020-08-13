@@ -1,3 +1,5 @@
+import Chai from 'chai';
+
 import { SchemaName } from '../typedefs/schema';
 
 export type RecordData = _.Dictionary<any>;
@@ -71,4 +73,7 @@ export interface RecordInfo extends RecordConcreteJson {
 
     /** Returns the full flattened record data, but only for changed properties */
     toFlatDiff(): Readonly<Partial<RecordFlat>>;
+
+    /** Start an expectation */
+    expect(path?: string): Chai.Assertion;
 }

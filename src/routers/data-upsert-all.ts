@@ -16,13 +16,10 @@ export default class extends Router {
 
     async validate() {
         Chai.expect(this.params).property('schema').a('string').not.empty;
-        Chai.expect(this.change).a('array').not.empty;
+        Chai.expect(this.change_list).a('array').not.empty;
     }
 
     async run() {
-        let change = this.change as _.Dictionary<any>[];
-        let schema = this.system.meta.toSchema(this.params.schema);
-
-        return schema.upsertAll(change);
+        return this.system.data.upsertAll(this.params.schema, this.change_list);
     }
 }

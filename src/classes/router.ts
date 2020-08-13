@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import assert from 'assert';
 import * as Http from 'http';
 import { pathToRegexp, match } from 'path-to-regexp';
 
@@ -34,8 +35,14 @@ export abstract class Router {
     }
 
     /** Returns the change data from the HTTP body (either an object or an array) */
-    get change(): _.Dictionary<any> | Array<_.Dictionary<any>> {
-        return this._change ?? (this._change = this._to_change());
+    get change_data(): _.Dictionary<any> {
+        assert(this._change instanceof Array === false);
+        return this._change;
+    }
+
+    get change_list(): _.Dictionary<any>[] {
+        assert(this._change instanceof Array);
+        return this._change;;
     }
 
     /** Executes the router `run()` method, wrapped in a try/catch block */

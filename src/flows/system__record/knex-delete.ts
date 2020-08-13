@@ -23,9 +23,19 @@ export default class extends Flow {
 
         // Add the records to the statement
         this.change.forEach(record => {
+            // Sanity checks
+            record.expect('data.id').a('string');
+            record.expect('meta.trashed_at').null;
+            record.expect('meta.trashed_by').null;
+
+            // Make updates
+            record.meta.trashed_at = System.NOW;
+            record.meta.trashed_by = this.system.user.id;
+
+            // Send
             knex.where({ id: record.data.id }).update({
-                meta__trashed_at: System.NOW,
-                meta__trashed_by: this.system.user.id
+                meta__trashed_at: record.meta.trashed_at,
+                meta__trashed_by: record.meta.trashed_by,
             });
         });
 

@@ -10,20 +10,17 @@ export default class extends Router {
         return '/api/data/:schema/:record';
     }
 
-    onSelect() {
+    onUpdate() {
         return true;
     }
 
     async validate() {
         Chai.expect(this.params).property('schema').a('string').not.empty;
         Chai.expect(this.params).property('record').a('string').not.empty;
+        Chai.expect(this.change_data).a('object').not.empty;
     }
 
     async run() {
-        return this.system.meta.toFilter(this.params.schema, {
-            where: [
-                { id: this.params.record }
-            ]
-        }).select404();
+        return this.system.data.updateOne(this.params.schema, this.change_data);
     }
 }

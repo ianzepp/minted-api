@@ -15,7 +15,7 @@ export default class extends Router {
     }
 
     async validate() {
-        Chai.expect(this.params).property('schema').is('string').not.empty;
+        Chai.expect(this.params).property('schema').a('string').not.empty;
     }
 
     async run() {

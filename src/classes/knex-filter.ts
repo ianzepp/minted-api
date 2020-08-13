@@ -22,6 +22,12 @@ export class KnexFilter {
         // Add ACLs / sharing restrictions
         this._share(knex);
 
+        // Ignore trashed records
+        knex.whereNull('meta__trashed_at');
+
+        // Ignore deleted records
+        knex.whereNull('meta__deleted_at');
+
         // Where
         this.filter.where.forEach(clause => this._where(knex, clause));
 
@@ -75,7 +81,7 @@ export class KnexFilter {
 
             // Is this a grouping?
             if (['$and', '$or', '$not', '$nor'].includes(column_name) && data instanceof Array) {
-                return this._where_grouping(knex, column_name, data);
+                return this._where_grouping(knex, column_name, data as FilterWhereClause[]);
             }
 
             // Is the data a native type?

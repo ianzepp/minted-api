@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import debug from 'debug';
+import Chai from 'chai';
 
 // API
 import { RecordConcreteJson } from '../typedefs/record';
@@ -43,8 +44,25 @@ export function isRecordFlat(something: any) {
 
 export class Record implements RecordInfo {
     // Internals
-    private readonly _source_data: RecordFlat = {};
-    private readonly _source_prev: RecordFlat = {};
+    private readonly _source_data: RecordFlat = {
+        id: null,
+        ns: null,
+        sc: null,
+        meta__created_at: null,
+        meta__created_by: null,
+        meta__updated_at: null,
+        meta__updated_by: null,
+    };
+
+    private readonly _source_prev: RecordFlat = {
+        id: null,
+        ns: null,
+        sc: null,
+        meta__created_at: null,
+        meta__created_by: null,
+        meta__updated_at: null,
+        meta__updated_by: null,
+    };
 
     // Proxies
     readonly acls = new RecordAclsProxy(this);
@@ -84,17 +102,6 @@ export class Record implements RecordInfo {
         else {
             throw new SystemError(500, 'Invalid record source data:', source);
         }
-
-        // Apply default column data
-        _.defaults(this._source_data, {
-            id: null,
-            ns: null,
-            sc: null,
-            meta__created_at: null,
-            meta__created_by: null,
-            meta__updated_at: null,
-            meta__updated_by: null,
-        });
     }
 
     get keys(): string[] {
@@ -120,6 +127,16 @@ export class Record implements RecordInfo {
 
     toFlatDiff() {
         return this.toFlat() // TODO implementation
+    }
+
+    expect(path?: string) {
+        if (path === undefined) {
+            return Chai.expect(this);
+        }
+
+        else {
+            return Chai.expect(this).nested.property(path);
+        }
     }
 
     //

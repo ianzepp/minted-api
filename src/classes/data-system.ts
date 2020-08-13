@@ -65,6 +65,12 @@ export class DataSystem {
         return this.selectAll(schema_name, change_data).then(__head_404);
     }
 
+    async selectIds(schema_name: SchemaName, filter_data: string[]): Promise<RecordInfo[]> {
+        return this.selectAll(schema_name, {
+            where: { id: { $in: filter_data } }
+        });
+    }
+
     async createOne(schema_name: SchemaName, change_data: ChangeData) {
         return this.createAll(schema_name, Array(change_data)).then(__head_one);
     }

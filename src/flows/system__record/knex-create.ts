@@ -26,6 +26,10 @@ export default class extends Flow {
 
         // Set record properties
         this.change.forEach(record => {
+            // Sanity checks
+            record.expect('data.id').null;
+
+            // Make changes
             record.data.id = this.system.uuid();
             record.data.ns = this.system.user.ns;
             record.data.sc = this.system.user.sc || null;

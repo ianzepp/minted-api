@@ -22,6 +22,10 @@ export default class extends Flow {
 
         // Loop and process records
         this.change.forEach(record => {
+            // Sanity checks
+            record.expect('data.id').a('string');
+
+            // Change
             record.meta.updated_at = System.NOW;
             record.meta.updated_by = this.system.user.id;
 

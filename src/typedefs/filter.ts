@@ -2,7 +2,7 @@
 import { RecordInfo } from '../typedefs/record';
 import { SchemaName } from '../typedefs/schema';
 
-export type FilterOp = '$eq' | '$ne' | '$gt' | '$gte' | '$lt' | '$lte' | '$like' | '$nlike';
+export type FilterOp = '$eq' | '$ne' | '$gt' | '$gte' | '$lt' | '$lte' | '$like' | '$nlike' | '$in' | '$nin';
 export type FilterGroupingOp = '$and' | '$or' | '$not' | '$nor';
 export type FilterType = FilterJson | FilterInfo;
 
@@ -14,7 +14,7 @@ export type FilterWhereClause = {
     [key in FilterGroupingOp]?: FilterWhereClause[]
 }
 
-export type FilterWhereCriteria = string | boolean | number | null;
+export type FilterWhereCriteria = string | string[] | boolean | number | null;
 
 export type FilterOrderClause = {
     [index: string]: 'asc' | 'desc';

@@ -11,6 +11,7 @@ export class RecordDataProxy implements RecordData {
         return new Proxy(record, {
             get: get,
             set: set,
+            has: has,
         });
     }
 }
@@ -34,6 +35,13 @@ function set(record: Record, p: string | number | symbol, v: any) {
 
     record.__source_data[p] = v;
     return true;
+}
+
+function has(record: Record, p: string | number | symbol) {
+    assert(typeof p === 'string', String(p));
+    assert(p.startsWith('acls__') === false, p);
+    assert(p.startsWith('meta__') === false, p);
+    return record.__source_data[p] !== undefined;
 }
 
 function toJSON(record: Record) {

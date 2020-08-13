@@ -17,6 +17,7 @@ export class RecordMetaProxy implements RecordMeta {
         return new Proxy(record, {
             get: get,
             set: set,
+            has: has,
         });
     }
 }
@@ -34,6 +35,11 @@ function set(record: Record, p: string | number | symbol, v: any) {
     assert(typeof p === 'string', String(p));
     record.__source_data['meta__' + p] = v;
     return true;
+}
+
+function has(record: Record, p: string | number | symbol) {
+    assert(typeof p === 'string', String(p));
+    return record.__source_data['meta__' + p] !== undefined;
 }
 
 function toJSON(record: Record) {
