@@ -1,5 +1,4 @@
 import _ from 'lodash';
-// import { format } from 'util';
 import { v4 as uuid } from 'uuid';
 
 // Subsystems
@@ -11,6 +10,9 @@ import { MetaSystem } from '../classes/meta-system';
 import { UserSystem } from '../classes/user-system';
 
 export class System {
+    static UUIDZERO = '00000000-0000-0000-0000-000000000000';
+    static NOW = new Date().toISOString();
+
     // Services
     public readonly bulk = new BulkSystem(this);
     public readonly data = new DataSystem(this);
@@ -20,9 +22,7 @@ export class System {
     public readonly user = new UserSystem(this);
 
     // Setup the user-specific system, or default to a root user.
-    constructor(readonly options: _.Dictionary<any> = {}) {
-
-    }
+    constructor(readonly options: _.Dictionary<any> = {}) {}
 
     /** Returns a new UUID v4 */
     uuid() {
@@ -33,23 +33,6 @@ export class System {
     datetime() {
         return new Date().toISOString();
     }
-
-    // /** Returns a new set of record meta properties */
-    // meta(): RecordMeta {
-    //     return {
-    //         access_deny: null,
-    //         access_edit: null,
-    //         access_full: null,
-    //         access_read: null,
-    //         created_at: this.datetime(),
-    //         created_by: this.uuid(),
-    //         id: this.uuid(),
-    //         trashed_at: null,
-    //         trashed_by: null,
-    //         updated_at: this.datetime(),
-    //         updated_by: this.uuid(),
-    //     };
-    // }
 
     /** Authenticate a request */
     async authenticate() {}

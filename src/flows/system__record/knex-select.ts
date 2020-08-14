@@ -21,7 +21,7 @@ export default class extends Flow {
     }
 
     async run() {
-        let knex = this.system.knex.tx(this.schema.type);
+        let knex = this.system.knex.tx(this.schema.name);
         let knex_filter = new KnexFilter(this.system, knex, this.filter);
 
         // Find all results, per the filter criteria
@@ -29,6 +29,6 @@ export default class extends Flow {
 
         // Convert to records
         this.change.length = 0;
-        this.change.push(... rows.map((native: ChangeData) => this.schema.toRecord(native)));
+        this.change.push(... rows.map((flat: ChangeData) => this.schema.toRecord(flat)));
     }
 }

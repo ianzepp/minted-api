@@ -2,7 +2,7 @@
 import { RecordInfo } from '../typedefs/record';
 import { SchemaName } from '../typedefs/schema';
 
-export type FilterOp = '$eq' | '$ne' | '$gt' | '$gte' | '$lt' | '$lte' | '$like' | '$nlike';
+export type FilterOp = '$eq' | '$ne' | '$gt' | '$gte' | '$lt' | '$lte' | '$like' | '$nlike' | '$in' | '$nin';
 export type FilterGroupingOp = '$and' | '$or' | '$not' | '$nor';
 export type FilterType = FilterJson | FilterInfo;
 
@@ -14,21 +14,21 @@ export type FilterWhereClause = {
     [key in FilterGroupingOp]?: FilterWhereClause[]
 }
 
-export type FilterWhereCriteria = string | boolean | number | null;
+export type FilterWhereCriteria = string | string[] | boolean | number | null;
 
 export type FilterOrderClause = {
     [index: string]: 'asc' | 'desc';
 }
 
 export interface FilterJson {
-    table?: SchemaName;
-    where?: FilterWhereClause[];
-    order?: FilterOrderClause[];
-    limit?: number;
+    using?: SchemaName;
+    where?: FilterWhereClause | FilterWhereClause[];
+    order?: FilterOrderClause | FilterOrderClause[];
+    limit?: number | 'max';
 }
 
 export interface FilterConcreteJson extends FilterJson {
-    table: SchemaName;
+    using: SchemaName;
     where: FilterWhereClause[];
     order: FilterOrderClause[];
     limit: number;
@@ -36,7 +36,7 @@ export interface FilterConcreteJson extends FilterJson {
 
 export interface FilterInfo extends FilterConcreteJson {
     /** Returns the parent schema table name for this filter */
-    readonly table: SchemaName;
+    readonly using: SchemaName;
 
     /** Proxy to `system.data.selectAll()` */
     selectAll(): Promise<RecordInfo[]>;

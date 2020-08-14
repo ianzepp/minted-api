@@ -1,10 +1,10 @@
 import _ from 'lodash';
+import assert from 'assert';
 import * as Http from 'http';
 import { pathToRegexp, match } from 'path-to-regexp';
 
 // API
 import { System } from '../classes/system';
-import { SystemError } from '../classes/system-error';
 
 export interface RouterResult {
     method: string | undefined,
@@ -34,8 +34,14 @@ export abstract class Router {
     }
 
     /** Returns the change data from the HTTP body (either an object or an array) */
-    get change(): _.Dictionary<any> | Array<_.Dictionary<any>> {
-        return this._change ?? (this._change = this._to_change());
+    get change_data(): _.Dictionary<any> {
+        assert(this._change instanceof Array === false);
+        return this._change;
+    }
+
+    get change_list(): _.Dictionary<any>[] {
+        assert(this._change instanceof Array);
+        return this._change;;
     }
 
     /** Executes the router `run()` method, wrapped in a try/catch block */
@@ -168,7 +174,7 @@ export abstract class Router {
     }
 
     private _to_params(): _.Dictionary<any> {
-        return _.get(match(this._parse_url().pathname), 'params') as _.Dictionary<string> || {};
+        return _.get(match(this.onRouterPath())(this._parse_url().pathname), 'params') || {};
     }
 
     private _to_search(): _.Dictionary<any> {

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
 import { Flow } from '../../classes/flow';
+import { System } from '../../classes/system';
 
 export default class extends Flow {
     onSchema() {
@@ -17,21 +18,19 @@ export default class extends Flow {
 
     async run() {
         // Setup knex, using the current transaction
-        let knex = this.system.knex.tx(this.schema.type);
+        let knex = this.system.knex.tx(this.schema.name);
 
-        // Add the records to the statement
+        // Loop and process records
         this.change.forEach(record => {
-            let native: _.Dictionary<any> = {};
+            // Sanity checks
+            record.expect('data.id').a('string');
 
-            // Copy changed data
-            _.assign(native, record.diff);
-
-            // Copy info properties
-            native.updated_at = this.system.datetime();
-            native.updated_by = this.system.user.user_id;
+            // Change
+            record.meta.updated_at = System.NOW;
+            record.meta.updated_by = this.system.user.id;
 
             // Add the change
-            knex.where({ id: record.meta.id }).update(native);
+            knex.where({ id: record.data.id }).update(record.toFlatDiff());
         });
 
         // Run the changes

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import Chai from 'chai';
 
 // API
-import { Router } from '../classes/router';
+import { Router } from '../../classes/router';
 
 // Implementation
 export default class extends Router {
@@ -15,13 +15,10 @@ export default class extends Router {
     }
 
     async validate() {
-        Chai.expect(this.params).property('schema').is('string').not.empty;
+        Chai.expect(this.params).property('schema').a('string').not.empty;
     }
 
     async run() {
-        let schema = this.system.meta.toSchema(this.params.schema);
-        let filter = schema.toFilter(this.search);
-
-        return filter.selectAll();
+        return this.system.data.selectAll(this.params.schema, this.search);
     }
 }

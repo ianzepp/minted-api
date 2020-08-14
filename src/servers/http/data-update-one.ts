@@ -2,12 +2,12 @@ import _ from 'lodash';
 import Chai from 'chai';
 
 // API
-import { Router } from '../classes/router';
+import { Router } from '../../classes/router';
 
 // Implementation
 export default class extends Router {
     onRouterPath() {
-        return '/api/data/:schema';
+        return '/api/data/:schema/:record';
     }
 
     onUpdate() {
@@ -16,13 +16,11 @@ export default class extends Router {
 
     async validate() {
         Chai.expect(this.params).property('schema').a('string').not.empty;
-        Chai.expect(this.change).a('array').not.empty;
+        Chai.expect(this.params).property('record').a('string').not.empty;
+        Chai.expect(this.change_data).a('object').not.empty;
     }
 
     async run() {
-        let change = this.change as _.Dictionary<any>[];
-        let schema = this.system.meta.toSchema(this.params.schema);
-
-        return schema.updateAll(change);
+        return this.system.data.updateOne(this.params.schema, this.change_data);
     }
 }

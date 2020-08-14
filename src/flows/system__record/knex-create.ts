@@ -1,7 +1,11 @@
 import _ from 'lodash';
+import debug from 'debug';
 
 // Classes
 import { Flow } from '../../classes/flow';
+import { System } from '../../classes/system';
+
+const logger = debug('minted-api:flow:system__record:knex-create');
 
 export default class extends Flow {
     onSchema() {
@@ -18,26 +22,32 @@ export default class extends Flow {
 
     async run() {
         // Setup knex, using the current transaction
-        let knex = this.system.knex.tx(this.schema.type);
+        let knex = this.system.knex.tx(this.schema.name);
 
-        // Add the records to the statement
+        // Set record properties
         this.change.forEach(record => {
-            let native: _.Dictionary<any> = {};
+            // Sanity checks
+            record.expect('data.id').null;
 
-            // Copy data
-            _.assign(native, record.diff);
+            // Make changes
+            record.data.id = this.system.uuid();
+            record.data.ns = this.system.user.ns;
+            record.data.sc = this.system.user.sc || null;
 
-            // Copy info properties
-            native.id = this.system.uuid();
-            native.created_at = this.system.datetime();
-            native.created_by = this.system.user.user_id;
-            native.updated_at = this.system.datetime();
-            native.updated_by = this.system.user.user_id;
+            record.meta.created_at = System.NOW;
+            record.meta.created_by = this.system.user.id;
+            record.meta.updated_at = System.NOW;
+            record.meta.updated_by = this.system.user.id;
+            record.meta.trashed_at = null;
+            record.meta.trashed_by = null;
 
-            // TODO - access
+            record.acls.full = record.acls.full || [];
+            record.acls.edit = record.acls.edit || [];
+            record.acls.read = record.acls.read || [];
+            record.acls.deny = record.acls.deny || [];
 
             // Add the change
-            knex.where({ id: record.meta.id }).update(native);
+            knex.insert(record.toFlat());
         });
 
         // Run the change

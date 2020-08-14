@@ -2,10 +2,10 @@ import { expect } from 'chai';
 import 'mocha';
 
 // Classes
-import { AutoInstall } from '../src/classes/autoinstall';
+import { AutoInstall } from '../../src/classes/autoinstall';
 
 // Script
-describe('Autoinstall', () => {
+describe('1.0.0 > Auto Install', () => {
     it('Mocha sanity check', () => {
         expect(true).true;
     });
@@ -14,7 +14,7 @@ describe('Autoinstall', () => {
         return new AutoInstall().bootstrap();
     });
 
-    it('Install core schemas', async () => {
+    it('Run autoinstall', async () => {
         return new AutoInstall().run();
     });
 });

@@ -7,7 +7,10 @@ import { ChangeData } from '../typedefs/record';
 export type SchemaName = string;
 export type SchemaType = SchemaInfo | SchemaName;
 
-export interface SchemaInfo extends RecordInfo {
+export interface SchemaInfo {
+    /** Returns the name of the schema */
+    readonly name: SchemaName;
+
     /** Generate a new filter */
     toFilter(source?: FilterJson): FilterInfo;
 
