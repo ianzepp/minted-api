@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 // Classes
 import { Flow } from '../../classes/flow';
@@ -28,7 +28,7 @@ export default class extends Flow {
             record.expect('data.id').null;
 
             // Make changes
-            record.data.id = uuid.v4();
+            record.data.id = uuid();
             record.data.ns = this.system.user.ns;
             record.data.sc = this.system.user.sc || null;
 
