@@ -17,4 +17,4 @@ createdb "$PGDATABASE"
 npm run compile
 
 # Execute tests
-mocha -r ts-node/register mocha/**/*.spec.ts --exit
+mocha -r ts-node/register tests/**/*.spec.ts --exit

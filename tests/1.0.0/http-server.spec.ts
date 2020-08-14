@@ -6,7 +6,7 @@ import { Test } from '../test';
 import { TestHttp } from '../test-http';
 
 // Script
-describe('1.0.0 > Http Server', () => {
+describe.skip('1.0.0 > Http Server', () => {
     it('POST /api/data/<schema>/search', async () => {
         let result_all = await TestHttp.searchAll('system__schema', {});
 
