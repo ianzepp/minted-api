@@ -1,11 +1,9 @@
 import _ from 'lodash';
-import debug from 'debug';
+import uuid from 'uuid';
 
 // Classes
 import { Flow } from '../../classes/flow';
 import { System } from '../../classes/system';
-
-const logger = debug('minted-api:flow:system__record:knex-create');
 
 export default class extends Flow {
     onSchema() {
@@ -30,7 +28,7 @@ export default class extends Flow {
             record.expect('data.id').null;
 
             // Make changes
-            record.data.id = this.system.uuid();
+            record.data.id = uuid.v4();
             record.data.ns = this.system.user.ns;
             record.data.sc = this.system.user.sc || null;
 
