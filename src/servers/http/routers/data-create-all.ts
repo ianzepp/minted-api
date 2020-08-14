@@ -1,23 +1,11 @@
 import _ from 'lodash';
-import Chai from 'chai';
 
 // API
-import { Router } from '../../classes/router';
+import { HttpRouter } from '../http-router';
 
 // Implementation
-export default class extends Router {
-    onRouterPath() {
-        return '/api/data/:schema';
-    }
-
-    onCreate() {
-        return true;
-    }
-
+export default class extends HttpRouter {
     async run() {
-        Chai.expect(this.params).property('schema').a('string').not.empty;
-        Chai.expect(this.change_list).a('array').not.empty;
-
-        return this.system.data.createAll(this.params.schema, this.change_list);
+        return this.system.data.createAll(this.params.schema, this.body);
     }
 }

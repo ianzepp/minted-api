@@ -2,79 +2,114 @@ import _ from 'lodash';
 import Http from 'http';
 import { pathToRegexp, match } from 'path-to-regexp';
 
-// Classes
-import { System } from '../classes/system';
-import { SystemError } from '../classes/system-error';
-import { Router } from '../classes/router';
-import { RouterResult } from '../classes/router';
-
 // Routers
-import DataSelectAll from '../servers/http/data-select-all';
-import DataSelectOne from '../servers/http/data-select-one';
-import DataUpdateAll from '../servers/http/data-update-all';
-import DataUpdateOne from '../servers/http/data-update-one';
+import { HttpRouter } from './http-router';
+
+import DataCreateAll from './routers/data-create-all';
+import DataDeleteAll from './routers/data-delete-all';
+import DataDeleteOne from './routers/data-delete-one';
+import DataSearchAll from './routers/data-search-all';
+import DataSelectAll from './routers/data-select-all';
+import DataSelectOne from './routers/data-select-one';
+import DataUpdateAll from './routers/data-update-all';
+import DataUpdateOne from './routers/data-update-one';
+import DataUpsertAll from './routers/data-upsert-all';
+
+export type HttpMethod = 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE';
+
+export interface HttpServerRoute {
+    method: HttpMethod;
+    path: string;
+    path_regexp: RegExp,
+    router_type: typeof HttpRouter;
+}
 
 export class HttpServer {
+    // Track the router paths
+    private readonly _routes: HttpServerRoute[] = [];
+
+    // Start the server
     listen(port: number) {
         console.warn('Starting http server..');
 
+        // Data API - Searches
+        this.use(DataSearchAll, 'POST', '/api/data/:schema/search');
+
+        // Data API - Record-level operations
+        this.use(DataSelectOne, 'GET', '/api/data/:schema/:record');
+        this.use(DataUpdateOne, 'PATCH', '/api/data/:schema/:record');
+        this.use(DataDeleteOne, 'DELETE', '/api/data/:schema/:record');
+
+        // Data API - Schema-level operationrs
+        this.use(DataSelectAll, 'GET', '/api/data/:schema');
+        this.use(DataCreateAll, 'POST', '/api/data/:schema');
+        this.use(DataUpsertAll, 'PUT', '/api/data/:schema');
+        this.use(DataUpdateAll, 'PATCH', '/api/data/:schema');
+        this.use(DataDeleteAll, 'DELETE', '/api/data/:schema');
+
         // Create the listening server
-        return Http.createServer(async (req, res) => this.handle(req, res))
-                   .setTimeout(1000)
-                   .listen(port);
+        let server = Http.createServer((req, res) => this.run(req, res));
+        server.setTimeout(1000);
+        server.listen(port);
+
+        // Done
     }
 
-    async handle(req: Http.IncomingMessage, res: Http.ServerResponse) {
-        // Run the process
+    use(router_type: typeof HttpRouter, method: HttpMethod, path: string) {
+        this._routes.push({
+            method: method,
+            path: path,
+            path_regexp: pathToRegexp(path),
+            router_type: router_type,
+        });
+    }
+
+    async run(req: Http.IncomingMessage, res: Http.ServerResponse) {
         try {
-            let system = new System();
-
-            // Generate all routers linked to this request
-            let routers: Router[] = [
-                new DataSelectOne(system, req, res),
-                new DataSelectAll(system, req, res),
-                new DataUpdateOne(system, req, res),
-                new DataUpdateAll(system, req, res),
-            ];
-
-            // Find the first runnable router
-            let active_router = routers.find(router => {
-                return router.isRunnable() && router.isRouterPath();
+            // Find the first matching route
+            let server_route = _.find(this._routes, server_route => {
+                return server_route.method === req.method
+                    && server_route.path_regexp.exec(req.url ?? '/') !== null;
             });
 
-            // Nothing was found?
-            if (active_router === undefined) {
-                throw new SystemError(404, 'Unknown route %j', req.url);
+            if (server_route === undefined) {
+                res.statusCode = 404;
+                return res.end();
             }
 
-            // Start execution
-            console.warn('>>', req.method, req.url);
+            // Extract params
+            let params_url = new URL('http://localhost' + req.url);
+            let params_match = match(server_route.path)(params_url.pathname);
+            let params = _.get(params_match, 'params');
 
-            // Process the user
-            await system.authenticate();
+            // console.warn('params_url', params_url);
+            // console.warn('params_match', params_match);
+            // console.warn('search', params_url.searchParams);
 
-            // Process route
-            let result = await active_router.runsafe();
+            // Extract search
+            let search = params_url.searchParams as _.Dictionary<any>;
+            let body: any = null;
 
-            // Return the result
-            res.setHeader('Content-Type', 'application/json');
-            res.write(JSON.stringify(result));
-            res.end();
+            // Generate router instance
+            let Router = server_route.router_type;
+            let router = new Router(params, search, body);
+
+            // Execute the router
+            let result = await router.runsafe();
+            let result_json = JSON.stringify(result);
+
+            // Return the data
+            res.statusCode = result.code;
+            res.write(result_json);
+            return res.end();
         }
 
         catch (error) {
-            // Generate the failure result
-            let result: RouterResult = {
-                method: req.method,
-                path: req.url,
-                code: error.code ?? 500,
-                data: error.message,
-            };
+            console.error('FATAL REQUEST ERROR!');
+            console.error(error);
 
-            // Return the result
-            res.setHeader('Content-Type', 'application/json');
-            res.write(JSON.stringify(result));
-            res.end();
+            res.statusCode = 500;
+            return res.end();
         }
     }
 }
