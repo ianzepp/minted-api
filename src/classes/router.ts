@@ -5,7 +5,6 @@ import { pathToRegexp, match } from 'path-to-regexp';
 
 // API
 import { System } from '../classes/system';
-import { SystemError } from '../classes/system-error';
 
 export interface RouterResult {
     method: string | undefined,
@@ -175,7 +174,7 @@ export abstract class Router {
     }
 
     private _to_params(): _.Dictionary<any> {
-        return _.get(match(this._parse_url().pathname), 'params') as _.Dictionary<string> || {};
+        return _.get(match(this.onRouterPath())(this._parse_url().pathname), 'params') || {};
     }
 
     private _to_search(): _.Dictionary<any> {
