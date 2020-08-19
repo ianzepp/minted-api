@@ -15,15 +15,17 @@ export default class extends KnexFlow {
     toOperation(record: RecordInfo) {
         // Sanity checks
         record.expect('data.id').a('string');
-        record.expect('meta.trashed_at').null;
-        record.expect('meta.trashed_by').null;
 
         // Timestamps
         record.meta.trashed_at = System.NOW;
         record.meta.trashed_by = this.system.user.id;
 
         // Process
-        return this.toKnex().where({ id: record.data.id }).update({
+        return this.toKnex().where({
+            id: record.data.id,
+            meta__trashed_at: null,
+            meta__trashed_by: null,
+        }).update({
             meta__trashed_at: System.NOW,
             meta__trashed_by: this.system.user.id,
         });
