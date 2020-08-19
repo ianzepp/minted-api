@@ -2,7 +2,6 @@ import _ from 'lodash';
 import Knex from 'knex';
 
 import { System } from '../classes/system';
-import { SystemError } from '../classes/system-error';
 
 // Let the library juggle connections internally
 export const KnexDriverOptions: Knex.Config = {
@@ -13,7 +12,8 @@ export const KnexDriverOptions: Knex.Config = {
         password: process.env.PGPASSWORD,
         database: process.env.PGDATABASE,
     },
-    useNullAsDefault: true
+    useNullAsDefault: true,
+    pool: { min: 2, max: 20 },
 };
 
 export const KnexDriver = Knex(KnexDriverOptions);
