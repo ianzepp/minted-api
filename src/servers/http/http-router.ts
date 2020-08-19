@@ -42,8 +42,6 @@ export class HttpRouter {
         }
 
         catch (error) {
-            console.error(error);
-
             // Save the result error
             result.code = error.code || 500;
             result.text = error.message;
