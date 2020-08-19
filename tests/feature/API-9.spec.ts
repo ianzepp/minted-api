@@ -100,15 +100,37 @@ describe('API-9', () => {
 
             Test.isRecord(create);
 
-            let update = await TestHttp.raw('PATCH', '/api/data/system__schema/' + create.data.id, null, {
+            let change = await TestHttp.raw('PATCH', '/api/data/system__schema/' + create.data.id, null, {
                 system__name: 'updated_record'
             });
 
-            Test.isRecord(update).nested.property('data.system__name', 'updated_record');
+            Test.isRecord(change).nested.property('data.system__name', 'updated_record');
 
             let verify = await TestHttp.raw('GET', '/api/data/system__schema/' + create.data.id);
 
             Test.isRecord(verify).nested.property('data.system__name', 'updated_record');
+        });
+
+        it('DELETE /api/data/<schema>/<record>', async () => {
+            let create = await TestHttp.raw('POST', '/api/data/system__schema/new', null, {
+                system__name: 'testing_schema'
+            });
+
+            Test.isRecord(create);
+
+            let change = await TestHttp.raw('DELETE', '/api/data/system__schema/' + create.data.id);
+
+            Test.isRecord(change).nested.property('meta.trashed_at').a('string');
+            Test.isRecord(change).nested.property('meta.trashed_by').a('string');
+
+            try {
+                await TestHttp.raw('GET', '/api/data/system__schema/' + create.data.id);
+                throw new Error('Test failed!');
+            }
+
+            catch (error) {
+                Test.expect(error).property('message', 'Request failed with status code 404');
+            }
         });
     });
 });
