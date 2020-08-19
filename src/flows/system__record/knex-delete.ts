@@ -1,45 +1,31 @@
 import _ from 'lodash';
 
+// API
+import { RecordInfo } from '../../typedefs/record';
+
 // Classes
-import { Flow } from '../../classes/flow';
+import { KnexFlow } from '../../classes/knex-flow';
 import { System } from '../../classes/system';
 
-export default class extends Flow {
-    onSchema() {
-        return 'system__record';
-    }
-
-    onRing() {
-        return Flow.RING_WORK;
-    }
-
+export default class extends KnexFlow {
     onDelete() {
         return true;
     }
 
-    async run() {
-        // Setup knex, using the current transaction
-        let knex = this.system.knex.tx(this.schema.name);
+    toOperation(record: RecordInfo) {
+        // Sanity checks
+        record.expect('data.id').a('string');
+        record.expect('meta.trashed_at').null;
+        record.expect('meta.trashed_by').null;
 
-        // Add the records to the statement
-        this.change.forEach(record => {
-            // Sanity checks
-            record.expect('data.id').a('string');
-            record.expect('meta.trashed_at').null;
-            record.expect('meta.trashed_by').null;
+        // Timestamps
+        record.meta.trashed_at = System.NOW;
+        record.meta.trashed_by = this.system.user.id;
 
-            // Make updates
-            record.meta.trashed_at = System.NOW;
-            record.meta.trashed_by = this.system.user.id;
-
-            // Send
-            knex.where({ id: record.data.id }).update({
-                meta__trashed_at: record.meta.trashed_at,
-                meta__trashed_by: record.meta.trashed_by,
-            });
+        // Process
+        return this.toKnex().where({ id: record.data.id }).update({
+            meta__trashed_at: System.NOW,
+            meta__trashed_by: this.system.user.id,
         });
-
-        // Run the changes
-        await knex;
     }
 }

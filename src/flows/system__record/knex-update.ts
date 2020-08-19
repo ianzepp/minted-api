@@ -1,39 +1,33 @@
 import _ from 'lodash';
 
-import { Flow } from '../../classes/flow';
+// API
+import { RecordInfo } from '../../typedefs/record';
+
+// Classes
+import { KnexFlow } from '../../classes/knex-flow';
 import { System } from '../../classes/system';
 
-export default class extends Flow {
-    onSchema() {
-        return 'system__record';
-    }
-
-    onRing() {
-        return Flow.RING_WORK;
-    }
-
+export default class extends KnexFlow {
     onUpdate() {
         return true;
     }
 
-    async run() {
-        // Setup knex, using the current transaction
-        let knex = this.system.knex.tx(this.schema.name);
+    toOperation(record: RecordInfo) {
+        // Sanity checks
+        record.expect('data.id').a('string');
 
-        // Loop and process records
-        this.change.forEach(record => {
-            // Sanity checks
-            record.expect('data.id').a('string');
+        // Make changes
+        record.meta.updated_at = System.NOW;
+        record.meta.updated_by = this.system.user.id;
 
-            // Change
-            record.meta.updated_at = System.NOW;
-            record.meta.updated_by = this.system.user.id;
+        // Convert to flat data
+        let native = _.omit(record.toFlatDiff(), ['id', 'ns']);
 
-            // Add the change
-            knex.where({ id: record.data.id }).update(record.toFlatDiff());
-        });
-
-        // Run the changes
-        await knex;
+        // Done
+        return this.toKnex().where({
+            id: record.data.id,
+            meta__trashed_at: null,
+            meta__trashed_by: null,
+        }).update(native);
     }
 }
