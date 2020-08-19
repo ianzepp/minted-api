@@ -11,19 +11,19 @@ export type ChangeData = RecordFlat | RecordData | RecordJson;
 
 export interface RecordMeta {
     /** Timestamp when the record was created */
-    created_at: string;
+    created_at: Date | null;
 
     /** User ID that created the record */
     created_by: UUID;
 
     /** Timestamp when the record was updated */
-    updated_at: string;
+    updated_at: Date | null;
 
     /** User ID who created the record */
     updated_by: UUID;
 
     /** Timestamp when the record was trashed, or `null` if the record is not trashed */
-    trashed_at: string | null;
+    trashed_at: Date | null;
 
     /** User ID that trashed the record, or `null` if the record is not trashed */
     trashed_by: UUID | null;
@@ -76,4 +76,7 @@ export interface RecordInfo extends RecordConcreteJson {
 
     /** Start an expectation */
     expect(path?: string): Chai.Assertion;
+
+    /** Import the original database data */
+    initialize(flat?: Readonly<RecordFlat>): void;
 }

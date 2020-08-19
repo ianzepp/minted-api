@@ -5,12 +5,12 @@ import { Record } from '../classes/record';
 import { RecordMeta } from '../typedefs/record';
 
 export class RecordMetaProxy implements RecordMeta {
-    created_at: string;
-    created_by: string;
-    updated_at: string;
-    updated_by: string;
-    trashed_at: string;
-    trashed_by: string;
+    created_at: Date | null;
+    created_by: string | null;
+    updated_at: Date | null;
+    updated_by: string | null;
+    trashed_at: Date | null;
+    trashed_by: string | null;
 
     constructor(record: Record) {
         // @ts-ignore
@@ -43,12 +43,14 @@ function has(record: Record, p: string | number | symbol) {
 }
 
 function toJSON(record: Record) {
+    let source = _.assign({}, record.__source_prev, record.__source_data);
+
     return {
-        created_at: record.__source_data.meta__created_at || null,
-        created_by: record.__source_data.meta__created_by || null,
-        updated_at: record.__source_data.meta__updated_at || null,
-        updated_by: record.__source_data.meta__updated_by || null,
-        trashed_at: record.__source_data.meta__trashed_at || null,
-        trashed_by: record.__source_data.meta__trashed_by || null,
+        created_at: source.meta__created_at || null,
+        created_by: source.meta__created_by || null,
+        updated_at: source.meta__updated_at || null,
+        updated_by: source.meta__updated_by || null,
+        trashed_at: source.meta__trashed_at || null,
+        trashed_by: source.meta__trashed_by || null,
     };
 }
