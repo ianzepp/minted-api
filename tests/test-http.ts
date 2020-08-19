@@ -22,6 +22,8 @@ export class TestHttp {
     static SERVER = new HttpServer().listen(TestHttp.SERVER_PORT);
 
     static async raw(method: AxiosMethod, url: string, params?: any, data?: any): Promise<any> {
+        // console.warn('TestHttp.raw() %j %j %j %j', method, url, params, data);
+
         let result_http = await Axios(`http://localhost:${TestHttp.SERVER_PORT}` + url, {
             method: method,
             params: params,
@@ -34,7 +36,7 @@ export class TestHttp {
 
         // Response wrapper 2 (from API)
         Chai.expect(result_http).nested.property('data.code', 200);
-        Chai.expect(result_http).nested.property('data.data').not.empty;
+        Chai.expect(result_http).nested.property('data.data').exist;
 
         //
         return _.get(result_http, 'data.data');
