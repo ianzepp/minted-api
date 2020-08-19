@@ -1,11 +1,18 @@
 import _ from 'lodash';
+import Util from 'util';
 import Http from 'http';
 import { pathToRegexp, match } from 'path-to-regexp';
+
+// HTTP reqeuest body parsers
+const textBody = Util.promisify(require('body'));
+const jsonBody = Util.promisify(require('body/json'));
+const formBody = Util.promisify(require('body/form'));
 
 // Routers
 import { HttpRouter } from './http-router';
 
 import DataCreateAll from './routers/data-create-all';
+import DataCreateOne from './routers/data-create-one';
 import DataDeleteAll from './routers/data-delete-all';
 import DataDeleteOne from './routers/data-delete-one';
 import DataSearchAll from './routers/data-search-all';
@@ -36,6 +43,7 @@ export class HttpServer {
         this.use(DataSearchAll, 'POST', '/api/data/:schema/search');
 
         // Data API - Record-level operations
+        this.use(DataCreateOne, 'POST', '/api/data/:schema/new');
         this.use(DataSelectOne, 'GET', '/api/data/:schema/:record');
         this.use(DataUpdateOne, 'PATCH', '/api/data/:schema/:record');
         this.use(DataDeleteOne, 'DELETE', '/api/data/:schema/:record');
@@ -64,6 +72,7 @@ export class HttpServer {
         });
     }
 
+
     async run(req: Http.IncomingMessage, res: Http.ServerResponse) {
         try {
             // Find the first matching route
@@ -85,10 +94,26 @@ export class HttpServer {
             // console.warn('params_url', params_url);
             // console.warn('params_match', params_match);
             // console.warn('search', params_url.searchParams);
+            // console.warn('headers', req.headers);
 
             // Extract search
             let search = params_url.searchParams as _.Dictionary<any>;
-            let body: any = null;
+
+            // Extract body data
+            let body = null;
+            let content_type = (req.headers['content-type'] || '').split(';');
+
+            if (content_type.includes('application/json')) {
+                body = await jsonBody(req, res);
+            }
+
+            if (content_type.includes('text/plain')) {
+                body = await textBody(req, res);
+            }
+
+            if (content_type.includes('multipart/form-data')) {
+                body = await formBody(req, res);
+            }
 
             // Generate router instance
             let Router = server_route.router_type;
