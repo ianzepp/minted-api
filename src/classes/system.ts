@@ -10,7 +10,7 @@ import { UserSystem } from '../classes/user-system';
 
 export class System {
     static UUIDZERO = '00000000-0000-0000-0000-000000000000';
-    static NOW = new Date().toISOString();
+    static NOW = new Date();
 
     // Services
     public readonly bulk = new BulkSystem(this);

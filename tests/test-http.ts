@@ -8,7 +8,7 @@ import { SchemaName } from '../src/typedefs/schema';
 import { FilterJson } from '../src/typedefs/filter';
 
 // classes
-import { HttpServer } from '../src/servers/http-server';
+import { HttpServer } from '../src/servers/http/http-server';
 
 export function toResultData(result: any) {
     Chai.expect(result).a('object');
@@ -22,16 +22,24 @@ export class TestHttp {
     static SERVER = new HttpServer().listen(TestHttp.SERVER_PORT);
 
     static async raw(method: AxiosMethod, url: string, params?: any, data?: any): Promise<any> {
+        // console.warn('TestHttp.raw() %j %j %j %j', method, url, params, data);
+
         let result_http = await Axios(`http://localhost:${TestHttp.SERVER_PORT}` + url, {
             method: method,
             params: params,
             data: data,
         });
 
+        // Response wrapper 1 (from Axios)
         Chai.expect(result_http).property('status', 200);
-        Chai.expect(result_http).property('data').not.undefined;
+        Chai.expect(result_http).property('data').a('object');
 
-        return _.get(result_http, 'data');
+        // Response wrapper 2 (from API)
+        Chai.expect(result_http).nested.property('data.code', 200);
+        Chai.expect(result_http).nested.property('data.data').exist;
+
+        //
+        return _.get(result_http, 'data.data');
     }
 
     //

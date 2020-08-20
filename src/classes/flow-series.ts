@@ -16,6 +16,7 @@ import { System } from '../classes/system';
 export const FLOWS: Array<typeof Flow> = [
     require('../flows/system__record/knex-create').default,
     require('../flows/system__record/knex-delete').default,
+    require('../flows/system__record/knex-reload').default,
     require('../flows/system__record/knex-select').default,
     require('../flows/system__record/knex-update').default,
 ];
@@ -80,7 +81,7 @@ export class FlowSeries implements FlowSeriesInfo {
     // Helpers
     //
 
-    private _to_flows() {
+    private _to_flows(): FlowInfo[] {
         return _.compact(FLOWS.map(FlowType => {
             // Create the flow
             let flow = new FlowType(this.system, this);
@@ -91,28 +92,25 @@ export class FlowSeries implements FlowSeriesInfo {
             }
 
             // Filter flows by operation
-            if (flow.onSelect() && this.isSelect() === false) {
-                return;
+            if (this.isSelect() && flow.onSelect()) {
+                return flow;
             }
 
-            if (flow.onCreate() && this.isCreate() === false) {
-                return;
+            if (this.isCreate() && flow.onCreate()) {
+                return flow;
             }
 
-            if (flow.onUpdate() && this.isUpdate() === false) {
-                return;
+            if (this.isUpdate() && flow.onUpdate()) {
+                return flow;
             }
 
-            if (flow.onUpsert() && this.isUpsert() === false) {
-                return;
+            if (this.isUpsert() && flow.onUpsert()) {
+                return flow;
             }
 
-            if (flow.onDelete() && this.isDelete() === false) {
-                return;
+            if (this.isDelete() && flow.onDelete()) {
+                return flow;
             }
-
-            // Ok, use it
-            return flow as FlowInfo;
         }));
     }
 }
