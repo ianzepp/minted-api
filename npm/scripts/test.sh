@@ -16,7 +16,7 @@ else
     export PGPORT="5432"
     export PGUSER="postgres"
     export PGPASSWORD=""
-    export PGDATABASE="minted-api"
+    export PGDATABASE="postgres"
 fi
 
 # Logging
