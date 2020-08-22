@@ -2,8 +2,7 @@
   "name": "minted-api",
   "version": "1.0.0",
   "description": "Minted API",
-  "main": "index.js",
-  "type": "module",
+  "main": "dst/server-start.js",
   "scripts": {
     "compile-clean": "bash ./run/compile-clean.sh",
     "compile": "bash ./run/compile.sh",
