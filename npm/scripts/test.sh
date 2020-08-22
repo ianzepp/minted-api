@@ -12,7 +12,7 @@ then
     dropdb "$PGDATABASE"
     createdb "$PGDATABASE"
 else
-    export PGHOST="locahost"
+    export PGHOST="localhost"
     export PGPORT="5432"
     export PGUSER="postgres"
     export PGPASSWORD=""
