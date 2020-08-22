@@ -13,3 +13,10 @@ pipelines:
         script: # Modify the commands below to build your repository.
           - npm install
           - npm test
+        services:
+          - postgres
+
+definitions:
+  services:
+    postgres:
+      image: postgres
