@@ -1,11 +1,20 @@
 #!/bin/bash
 
 # Ensure env vars are set
-export PGHOST="localhost"
-export PGPORT="5432"
-export PGUSER=""
-export PGPASSWORD=""
-export PGDATABASE="minted-api"
+if [ "$CI" = "" ]
+then
+    export PGHOST="localhost"
+    export PGPORT="5432"
+    export PGUSER=""
+    export PGPASSWORD=""
+    export PGDATABASE="minted-api"
+else
+    export PGHOST="locahost"
+    export PGPORT="5432"
+    export PGUSER="$POSTGRES_USER"
+    export PGPASSWORD="$POSTGRES_PASSWORD"
+    export PGDATABASE="$POSTGRES_DB"
+fi
 
 # Remove any prior test database
 dropdb "$PGDATABASE"
