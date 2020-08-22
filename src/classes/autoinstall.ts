@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import chai from 'chai';
+import { v4 as uuid } from 'uuid';
 
 import { System } from '../classes/system';
 
@@ -52,7 +53,7 @@ export class AutoInstall {
     private _create(schema_name: string, data: _.Dictionary<any>) {
         // Copy in fixed column data
         data = _.assign({}, {
-            id: this.system.uuid(),
+            id: uuid(),
             ns: 'system',
             sc: null,
             meta__created_at: System.NOW,

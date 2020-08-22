@@ -25,7 +25,18 @@ function get(record: Record, p: string | number | symbol) {
     assert(p.startsWith('acls__') === false, p);
     assert(p.startsWith('meta__') === false, p);
 
-    return record.__source_data[p];
+    let data = record.__source_data[p];
+    let prev = record.__source_prev[p];
+
+    if (data !== undefined) {
+        return data;
+    }
+
+    if (prev !== undefined) {
+        return prev;
+    }
+
+    return null;
 }
 
 function set(record: Record, p: string | number | symbol, v: any) {
@@ -41,11 +52,13 @@ function has(record: Record, p: string | number | symbol) {
     assert(typeof p === 'string', String(p));
     assert(p.startsWith('acls__') === false, p);
     assert(p.startsWith('meta__') === false, p);
-    return record.__source_data[p] !== undefined;
+    return record.__source_data[p] !== undefined || record.__source_prev[p] !== undefined;
 }
 
 function toJSON(record: Record) {
-    return _.transform(record.__source_data, (result, v, p) => {
+    let source = _.assign({}, record.__source_prev, record.__source_data);
+
+    return _.transform(source, (result, v, p) => {
         if (p.startsWith('meta__')) {
             return result;
         }

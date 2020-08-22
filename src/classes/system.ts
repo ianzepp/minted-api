@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { v4 as uuid } from 'uuid';
 
 // Subsystems
 import { BulkSystem } from '../classes/bulk-system';
@@ -11,7 +10,7 @@ import { UserSystem } from '../classes/user-system';
 
 export class System {
     static UUIDZERO = '00000000-0000-0000-0000-000000000000';
-    static NOW = new Date().toISOString();
+    static NOW = new Date();
 
     // Services
     public readonly bulk = new BulkSystem(this);
@@ -23,16 +22,6 @@ export class System {
 
     // Setup the user-specific system, or default to a root user.
     constructor(readonly options: _.Dictionary<any> = {}) {}
-
-    /** Returns a new UUID v4 */
-    uuid() {
-        return uuid();
-    }
-
-    /** Returns the current timestamp as an ISO string */
-    datetime() {
-        return new Date().toISOString();
-    }
 
     /** Authenticate a request */
     async authenticate() {}

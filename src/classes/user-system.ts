@@ -4,7 +4,7 @@ import { System } from '../classes/system';
 
 export class UserSystem {
     private readonly _user_id: string = '00000000-0000-0000-0000-000000000000';
-    private readonly _user_ns: string = 'root';
+    private readonly _user_ns: string = 'system';
     private readonly _user_sc: string | null = null;
     private _access_list: string[] | undefined;
 

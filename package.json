@@ -2,14 +2,12 @@
   "name": "minted-api",
   "version": "1.0.0",
   "description": "Minted API",
-  "main": "index.js",
-  "type": "module",
+  "main": "dst/server-start.js",
   "scripts": {
-    "compile-clean": "bash ./run/compile-clean.sh",
-    "compile": "bash ./run/compile.sh",
-    "start": "bash ./run/start.sh",
-    "test": "bash ./run/test.sh",
-    "test-loud": "bash ./run/test-loud.sh"
+    "compile-clean": "bash ./npm/scripts/compile-clean.sh",
+    "compile": "bash ./npm/scripts/compile.sh",
+    "start": "bash ./npm/scripts/start.sh",
+    "test": "bash ./npm/scripts/test.sh"
   },
   "repository": {
     "type": "git",
@@ -30,6 +28,7 @@
     "@types/node": "^14.0.23",
     "@types/uuid": "^8.0.0",
     "axios": "^0.19.2",
+    "body": "^5.1.0",
     "chai": "^4.2.0",
     "debug": "^4.1.1",
     "knex": "^0.21.2",

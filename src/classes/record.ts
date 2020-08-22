@@ -44,16 +44,7 @@ export function isRecordFlat(something: any) {
 
 export class Record implements RecordInfo {
     // Internals
-    private readonly _source_data: RecordFlat = {
-        id: null,
-        ns: null,
-        sc: null,
-        meta__created_at: null,
-        meta__created_by: null,
-        meta__updated_at: null,
-        meta__updated_by: null,
-    };
-
+    private readonly _source_data: RecordFlat = {};
     private readonly _source_prev: RecordFlat = {
         id: null,
         ns: null,
@@ -137,6 +128,10 @@ export class Record implements RecordInfo {
         else {
             return Chai.expect(this).nested.property(path);
         }
+    }
+
+    initialize(flat?: Readonly<RecordFlat>) {
+        _.assign(this._source_prev, flat);
     }
 
     //
