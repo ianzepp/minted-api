@@ -4,11 +4,10 @@
   "description": "Minted API",
   "main": "dst/server-start.js",
   "scripts": {
-    "compile-clean": "bash ./run/compile-clean.sh",
-    "compile": "bash ./run/compile.sh",
-    "start": "bash ./run/start.sh",
-    "test": "bash ./run/test.sh",
-    "test-loud": "bash ./run/test-loud.sh"
+    "compile-clean": "bash ./npm/scripts/compile-clean.sh",
+    "compile": "bash ./npm/scripts/compile.sh",
+    "start": "bash ./npm/scripts/start.sh",
+    "test": "bash ./npm/scripts/test.sh"
   },
   "repository": {
     "type": "git",
