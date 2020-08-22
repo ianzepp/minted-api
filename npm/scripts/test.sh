@@ -14,9 +14,9 @@ then
 else
     export PGHOST="locahost"
     export PGPORT="5432"
-    export PGUSER="$POSTGRES_USER"
-    export PGPASSWORD="$POSTGRES_PASSWORD"
-    export PGDATABASE="$POSTGRES_DB"
+    export PGUSER="postgres"
+    export PGPASSWORD=""
+    export PGDATABASE="minted-api"
 fi
 
 # Logging
