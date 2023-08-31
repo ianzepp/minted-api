@@ -1,6 +1,8 @@
 # minted-api
 
-Minted API
+This is an initial brain dump of what I remember from the original Minted API implementation in 2017, and what I learned from 2017-2020 during my time at Motivis. This is highly incomplete because I stopped brain dumping after only a week or two or work. 
+
+As of 2023, I decided to pick this up again and start rework in the `minted-api` project in my github repo/account. 
 
 # Installation
 
